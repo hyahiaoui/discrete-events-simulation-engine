@@ -1,5 +1,5 @@
 /**
- * \file    simulationtime.h
+ * \file    SimulationTime.h
  * \brief   Declaration of fixed-point representation of simulation time
  * \date    June, 9th, 2011
  * \author  Yahiaoui H.
@@ -16,23 +16,23 @@
  *  This class represents the time used for simulation purposes. It uses a fixed point representation of time, to achieve
  *  speed and usability on several scales of time.
  */
-class cSimulationTime {
+class SimulationTime {
 public:
     // --------- Constructors
     /**
       * \brief  Default constructor that builds a 0-time.
       */
-    //cSimulationTime();
+    //SimulationTime();
 
     /**
       * \brief  Copy constructor.
       */
-    cSimulationTime(const cSimulationTime& other);
+    SimulationTime(const SimulationTime& other);
 
     /**
       * \brief  Time Constructor from double value.
       */
-    cSimulationTime(const long double dbl_time = 0);
+    SimulationTime(const long double dbl_time = 0);
 
     // --------- Explicit Conversion methods
     /**
@@ -91,7 +91,7 @@ public:
     /**
       * \brief  Assignment operator
       */
-    inline cSimulationTime& operator=(const cSimulationTime& other)
+    inline SimulationTime& operator=(const SimulationTime& other)
     {
         if (this != &other)
             _time = other._time;
@@ -101,7 +101,7 @@ public:
     /**
       * \brief  Equality test operator
       */
-    inline bool operator==(const cSimulationTime& other) const
+    inline bool operator==(const SimulationTime& other) const
     {
         return (_time == other._time);
     }
@@ -109,7 +109,7 @@ public:
     /**
       * \brief  Difference test operator
       */
-    inline bool operator!=(const cSimulationTime& other) const
+    inline bool operator!=(const SimulationTime& other) const
     {
         return !operator==(other);
     }
@@ -117,7 +117,7 @@ public:
     /**
       * \brief  Less than test operator
       */
-    inline bool operator<(const cSimulationTime& other) const
+    inline bool operator<(const SimulationTime& other) const
     {
         return (_time < other._time);
     }
@@ -125,7 +125,7 @@ public:
     /**
       * \brief  Less than or equal to test operator
       */
-    inline bool operator<=(const cSimulationTime& other) const
+    inline bool operator<=(const SimulationTime& other) const
     {
         return (operator==(other) || operator<(other));
     }
@@ -133,7 +133,7 @@ public:
     /**
       * \brief  Greater than test operator
       */
-    inline bool operator>(const cSimulationTime& other) const
+    inline bool operator>(const SimulationTime& other) const
     {
         return (_time > other._time);
     }
@@ -141,7 +141,7 @@ public:
     /**
       * \brief  Greater than or equal to test operator
       */
-    inline bool operator>=(const cSimulationTime& other) const
+    inline bool operator>=(const SimulationTime& other) const
     {
         return (operator==(other) || operator>(other));
     }
@@ -149,42 +149,42 @@ public:
     /**
       * \brief  Addition assignment operator
       */
-    cSimulationTime& operator+=(const cSimulationTime&);
+    SimulationTime& operator+=(const SimulationTime&);
 
     /**
       * \brief  Substraction assignment operator
       */
-    cSimulationTime& operator-=(const cSimulationTime&);
+    SimulationTime& operator-=(const SimulationTime&);
 
     /**
       * \brief  Multiplication assignment operator
       */
-    cSimulationTime& operator*=(const long double&);
+    SimulationTime& operator*=(const long double&);
 
     /**
       * \brief  Division assignment operator
       */
-    cSimulationTime& operator/=(const long double&);
+    SimulationTime& operator/=(const long double&);
 
     /**
       * \brief  Addition operator
       */
-    cSimulationTime operator+(const cSimulationTime&) const;
+    SimulationTime operator+(const SimulationTime&) const;
 
     /**
       * \brief  Substraction operator
       */
-    cSimulationTime operator-(const cSimulationTime&) const;
+    SimulationTime operator-(const SimulationTime&) const;
 
     /**
       * \brief  Multiplication operator
       */
-    cSimulationTime operator*(const long double&) const;
+    SimulationTime operator*(const long double&) const;
 
     /**
       * \brief  Division operator
       */
-    cSimulationTime operator/(const long double&) const;
+    SimulationTime operator/(const long double&) const;
 
 private:
     typedef signed long long int DataType;
@@ -197,6 +197,6 @@ private:
 /**
   * \brief Output stream writer
   */
-std::ostream& operator<<(std::ostream& ost, const cSimulationTime& time);
+std::ostream& operator<<(std::ostream& ost, const SimulationTime& time);
 
 #endif // SIMULATIONTIME_H

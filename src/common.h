@@ -9,23 +9,27 @@
 #define COMMON_H
 
 //  Common types definitions
+
 /**
   * \brief  Type of identifiers of modules and static elements in map edition and simulation.
   */
-typedef unsigned long tModuleId;
+typedef unsigned long ModuleId;
+
 /**
   * \brief  Type of identifiers of particles dynamic elements in map edition and simulation.
   */
-typedef unsigned long long tParticleId;
+typedef unsigned long long ParticleId;
 
 // Common consts definitions
+
 /**
   * \brief  Special module identifier to specify invalidity.
   */
-const tModuleId invalidModuleId = ~((tModuleId)0); // All bits to 1
+const ModuleId invalidModuleId = ~((ModuleId)0); // All bits to 1
+
 /**
   * \brief  Special particle identifier to specify invalidity.
   */
-const tParticleId invalidParticleId = ~((tParticleId)0); // All bits to 1
+const ParticleId invalidParticleId = ~((ParticleId)0); // All bits to 1
 
 #endif // COMMON_H

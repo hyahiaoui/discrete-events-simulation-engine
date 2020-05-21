@@ -1,38 +1,37 @@
 /**
- * \file    simulationtime.cpp
+ * \file    SimulationTime.cpp
  * \brief   Implementation of fixed-point representation of simulation time
  * \date    June, 9th, 2011
  * \author  Yahiaoui H.
  */
 
-#include "simulationtime.h"
+#include "SimulationTime.h"
 
 #include <cmath>
 #include <cstring>
-
 #include <sstream>
 
-unsigned cSimulationTime::_timeDataLength = sizeof(cSimulationTime::_time) << 3; // nbBits = nbOctets * 8 bits (we'll use 64 bits)
-unsigned cSimulationTime::_timeDataPrecision = cSimulationTime::_timeDataLength / 8 * 3; // precision = (nbBits / 8) * 3 (we'll use 24 of 64)
+unsigned SimulationTime::_timeDataLength = sizeof(SimulationTime::_time) << 3; // nbBits = nbOctets * 8 bits (we'll use 64 bits)
+unsigned SimulationTime::_timeDataPrecision = SimulationTime::_timeDataLength / 8 * 3; // precision = (nbBits / 8) * 3 (we'll use 24 of 64)
 /*
-cSimulationTime::cSimulationTime():
+SimulationTime::SimulationTime():
     _time(0)
 {
 }
 */
-cSimulationTime::cSimulationTime(const cSimulationTime& other)
+SimulationTime::SimulationTime(const SimulationTime& other)
     : _time(0)
 {
     operator=(other);
 }
 
-cSimulationTime::cSimulationTime(const long double dbl_time)
+SimulationTime::SimulationTime(const long double dbl_time)
     : _time(0)
 {
     fromDbl(dbl_time);
 }
 
-void cSimulationTime::toStr(char* writeStr) const
+void SimulationTime::toStr(char* writeStr) const
 {
     if (writeStr) {
         long int intP = toInt();
@@ -65,7 +64,7 @@ void cSimulationTime::toStr(char* writeStr) const
     }
 }
 
-void cSimulationTime::fromStr(const char* readStr)
+void SimulationTime::fromStr(const char* readStr)
 {
     if (!readStr)
         return;
@@ -183,81 +182,81 @@ void cSimulationTime::fromStr(const char* readStr)
     fromDbl(tmpTime);
 }
 
-long int cSimulationTime::toInt() const
+long int SimulationTime::toInt() const
 {
     return (long int)(toDbl());
 }
 
-void cSimulationTime::fromInt(const long int int_time)
+void SimulationTime::fromInt(const long int int_time)
 {
     fromDbl((long double)int_time);
 }
 
-long double cSimulationTime::toDbl() const
+long double SimulationTime::toDbl() const
 {
     long double tmp = (long double)_time;
     return (tmp / (long double)(2 << _timeDataPrecision));
 }
 
-void cSimulationTime::fromDbl(const long double dbl_time)
+void SimulationTime::fromDbl(const long double dbl_time)
 {
     long double tmp = dbl_time * (2 << _timeDataPrecision);
     _time = (DataType)tmp;
 }
 
-cSimulationTime& cSimulationTime::operator+=(const cSimulationTime& op)
+SimulationTime& SimulationTime::operator+=(const SimulationTime& op)
 {
     _time += op._time;
     return *this;
 }
 
-cSimulationTime& cSimulationTime::operator-=(const cSimulationTime& op)
+SimulationTime& SimulationTime::operator-=(const SimulationTime& op)
 {
     _time -= op._time;
     return *this;
 }
 
-cSimulationTime& cSimulationTime::operator*=(const long double& op)
+SimulationTime& SimulationTime::operator*=(const long double& op)
 {
     fromDbl(toDbl() * op);
     return *this;
 }
 
-cSimulationTime& cSimulationTime::operator/=(const long double& op)
+SimulationTime& SimulationTime::operator/=(const long double& op)
 {
     fromDbl(toDbl() / op);
     return *this;
 }
 
-cSimulationTime cSimulationTime::operator+(const cSimulationTime& op) const
+SimulationTime SimulationTime::operator+(const SimulationTime& op) const
 {
-    cSimulationTime cpy(*this);
+    SimulationTime cpy(*this);
     cpy.operator+=(op);
     return cpy;
 }
 
-cSimulationTime cSimulationTime::operator-(const cSimulationTime& op) const
+SimulationTime SimulationTime::operator-(const SimulationTime& op) const
 {
-    cSimulationTime cpy(*this);
+    SimulationTime cpy(*this);
     cpy.operator-=(op);
     return cpy;
 }
 
-cSimulationTime cSimulationTime::operator*(const long double& op) const
+SimulationTime SimulationTime::operator*(const long double& op) const
 {
-    cSimulationTime cpy(*this);
+    SimulationTime cpy(*this);
     cpy.operator*=(op);
     return cpy;
 }
 
-cSimulationTime cSimulationTime::operator/(const long double& op) const
+SimulationTime SimulationTime::operator/(const long double& op) const
 {
-    cSimulationTime cpy(*this);
+    SimulationTime cpy(*this);
     cpy.operator/=(op);
     return cpy;
 }
 
-std::ostream& operator<<(std::ostream& ost, const cSimulationTime& time)
+std::ostream& operator<<(std::ostream& ost, const SimulationTime& time)
 {
     //std::cout << "FGHJK" << std::endl;
     char tmp[100];

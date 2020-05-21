@@ -7,35 +7,35 @@ include(build/conanbuildinfo.cmake)
 conan_basic_setup()
 
 set(SRCS
-    src/baseobject.cpp
-    src/desimulator.cpp
-    src/genericgraph.cpp
+    src/BaseObject.cpp
+    src/DESimulator.cpp
+    src/GenericGraph.cpp
     src/main.cpp
-    src/moduletimer.cpp
-    src/movingparticle.cpp
-    src/random.cpp
-    src/randomvariable.cpp
-    src/simulationevent.cpp
-    src/simulationmodule.cpp
-    src/simulationtime.cpp
-    src/test_desimulator.cpp
-    src/uniqueidgenerator.cpp
+    src/ModuleTimer.cpp
+    src/MovingParticle.cpp
+    src/Random.cpp
+    src/RandomVariable.cpp
+    src/SimulationEvent.cpp
+    src/SimulationModule.cpp
+    src/SimulationTime.cpp
+    src/TestDESimulator.cpp
+    src/UniqueIDGenerator.cpp
     )
     
 set(HEADERS
-    src/baseobject.h
+    src/BaseObject.h
     src/common.h
-    src/desimulator.h
-    src/genericgraph.h
-    src/moduletimer.h
-    src/movingparticle.h
-    src/random.h
-    src/randomvariable.h
-    src/simulationevent.h
-    src/simulationmodule.h
-    src/simulationtime.h
-    src/test_desimulator.h
-    src/uniqueidgenerator.h
+    src/DESimulator.h
+    src/GenericGraph.h
+    src/ModuleTimer.h
+    src/MovingParticle.h
+    src/Random.h
+    src/RandomVariable.h
+    src/SimulationEvent.h
+    src/SimulationModule.h
+    src/SimulationTime.h
+    src/TestDESimulator.h
+    src/UniqueIDGenerator.h
     )
 
 add_compile_options(-std=c++11)

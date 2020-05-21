@@ -1,51 +1,51 @@
 #ifndef SIMULATIONEVENT_H
 #define SIMULATIONEVENT_H
 
-#include "baseobject.h"
+#include "BaseObject.h"
+#include "SimulationTime.h"
 #include "common.h"
-#include "simulationtime.h"
 
 /**
   * \brief
   */
-class cSimulationEvent : public cBaseObject {
+class SimulationEvent : public BaseObject {
 public:
     /**
       * \brief
       */
-    cSimulationEvent(const tModuleId& creatorId, const std::string& name = std::string());
+    SimulationEvent(const ModuleId& creatorId, const std::string& name = std::string());
 
     /**
       * \brief
       */
-    cSimulationEvent(const cSimulationEvent& other);
+    SimulationEvent(const SimulationEvent& other);
 
-    virtual ~cSimulationEvent() noexcept(false);
-
-    /**
-      * \brief
-      */
-    virtual cSimulationEvent& operator=(const cSimulationEvent& other);
+    virtual ~SimulationEvent() noexcept(false);
 
     /**
       * \brief
       */
-    virtual bool operator==(const cSimulationEvent& other);
+    virtual SimulationEvent& operator=(const SimulationEvent& other);
 
     /**
       * \brief
       */
-    virtual const cSimulationTime& occurrenceTime() const;
+    virtual bool operator==(const SimulationEvent& other);
 
     /**
       * \brief
       */
-    virtual void setOccurenceTime(const cSimulationTime& occurenceTime);
+    virtual const SimulationTime& occurrenceTime() const;
 
     /**
       * \brief
       */
-    virtual void scheduleAt(const cSimulationTime& occurenceTime);
+    virtual void setOccurenceTime(const SimulationTime& occurenceTime);
+
+    /**
+      * \brief
+      */
+    virtual void scheduleAt(const SimulationTime& occurenceTime);
 
     /**
       * \brief
@@ -57,19 +57,19 @@ public:
       */
     virtual void cancelScheduling();
 
-    virtual const cSimulationTime& creationTime() const;
+    virtual const SimulationTime& creationTime() const;
 
-    virtual const tModuleId& creationModule() const;
+    virtual const ModuleId& creationModule() const;
 
     virtual const char* serialize() const;
 
 protected:
 private:
-    cSimulationTime m_occurrenceTime;
+    SimulationTime m_occurrenceTime;
     bool m_scheduled;
 
-    cSimulationTime m_creationTime;
-    tModuleId m_creationModule;
+    SimulationTime m_creationTime;
+    ModuleId m_creationModule;
 };
 
 #endif // SIMULATIONEVENT_H

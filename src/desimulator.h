@@ -1,10 +1,10 @@
 #ifndef DESIMULATOR_H
 #define DESIMULATOR_H
 
-#include "genericgraph.h"
-#include "simulationevent.h"
-#include "simulationmodule.h"
-#include "simulationtime.h"
+#include "GenericGraph.h"
+#include "SimulationEvent.h"
+#include "SimulationModule.h"
+#include "SimulationTime.h"
 
 #include <queue>
 
@@ -17,8 +17,8 @@
  *  sorted: the Particle with the smaller next arrival time is the first, ..., and the Particle with the greatest next arrival
  *  time is the last in the queue. Even when adding new Particles to the queue, this property is kept.
  */
-struct cSimulationEvent_Cmp {
-    inline bool operator()(const cSimulationEvent* pr1, const cSimulationEvent* pr2) const
+struct SimulationEventCmp {
+    inline bool operator()(const SimulationEvent* pr1, const SimulationEvent* pr2) const
     {
         return pr1->occurrenceTime() > pr2->occurrenceTime();
     }
@@ -29,7 +29,7 @@ struct cSimulationEvent_Cmp {
   *
   *
   */
-class cDESimulator {
+class DESimulator {
 public:
     /**
       * \brief
@@ -52,27 +52,27 @@ public:
     /**
      *  \brief  Queue of future events occurence in discrete events simulators.
      */
-    typedef std::priority_queue<cSimulationEvent*, std::deque<cSimulationEvent*>, cSimulationEvent_Cmp> tSimulationEventQueue;
+    typedef std::priority_queue<SimulationEvent*, std::deque<SimulationEvent*>, SimulationEventCmp> tSimulationEventQueue;
 
     /**
       * \brief
       */
-    typedef cGenericGraph<cSimulationModule*, int, true, cSimulationModulePtrCmp> SimulationGraph;
+    typedef GenericGraph<SimulationModule*, int, true, SimulationModulePtrCmp> SimulationGraph;
 
     /**
       *
       */
-    static cDESimulator* theSimulator();
+    static DESimulator* theSimulator();
 
     /**
       *
       */
-    static cSimulationTime simTime();
+    static SimulationTime simTime();
 
     /**
       *
       */
-    static tModuleId processedModule();
+    static ModuleId processedModule();
 
     /**
       *
@@ -87,7 +87,7 @@ public:
     /**
       * \param  maxSimTime  maximum simulation time for a single simulation (if equal to 0, then the simulations are done until no more events have to be simulated)
       */
-    void simulate(const cSimulationTime& maxSimTime, unsigned simulationsNumber = 1);
+    void simulate(const SimulationTime& maxSimTime, unsigned simulationsNumber = 1);
 
     /**
       * \brief
@@ -112,17 +112,17 @@ public:
     /**
       *
       */
-    ~cDESimulator();
+    ~DESimulator();
 
     /**
       * \brief
       **/
-    void scheduleFutureEvent(cSimulationEvent* futureEvent);
+    void scheduleFutureEvent(SimulationEvent* futureEvent);
 
     /**
       * \brief
       **/
-    void cancelFutureEvent(cSimulationEvent* futureEventToCancel);
+    void cancelFutureEvent(SimulationEvent* futureEventToCancel);
 
     const SimulationGraph* getSimulationGraph() const
     {
@@ -140,7 +140,7 @@ protected:
       * \brief
       * \param  maxSimTime  maximum simulation time for a single simulation (if equal to 0, then the simulations are done until no more events have to be simulated)
       */
-    void makeSimulation(const cSimulationTime& maxSimTime, unsigned currentSimulationId);
+    void makeSimulation(const SimulationTime& maxSimTime, unsigned currentSimulationId);
 
     /**
       * \brief
@@ -149,14 +149,14 @@ protected:
     void postProcessSimulation(unsigned currentSimulationId);
 
 private:
-    cDESimulator();
+    DESimulator();
 
-    static cDESimulator* m_simulator;
+    static DESimulator* m_simulator;
 
     //  Real simulator data
     SimulationPattern m_simulationPattern;
-    cSimulationTime m_simulationCurrentTime;
-    tModuleId m_simulationCurrentProcessedModule;
+    SimulationTime m_simulationCurrentTime;
+    ModuleId m_simulationCurrentProcessedModule;
     tSimulationEventQueue m_simulationEventsQueue;
     SimulationGraph* m_simulationGraph;
 

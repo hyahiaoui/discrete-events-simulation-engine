@@ -1,5 +1,5 @@
 /**
- * \file    baseobject.h
+ * \file    BaseObject.h
  * \brief   Declaration of base class for static and dynamic elements in maps edition and simulation.
  * \date    June, 10th, 2011
  * \author  Yahiaoui H.
@@ -15,38 +15,38 @@
 /**
   * \brief  Base class for all entities with a name and a kind
   */
-class cBaseObject {
+class BaseObject {
 public:
     /**
       * \brief Default constructor
       */
-    cBaseObject(const char* name);
-    cBaseObject(const std::string& name = std::string());
+    BaseObject(const char* name);
+    BaseObject(const std::string& name = std::string());
 
     /**
       * \brief Copy Constructor
       */
-    cBaseObject(const cBaseObject& other);
+    BaseObject(const BaseObject& other);
 
     /**
       * \brief Destructor
       */
-    virtual ~cBaseObject() noexcept(false);
+    virtual ~BaseObject() noexcept(false);
 
     /**
       * \brief  Assignment operator
       */
-    virtual cBaseObject& operator=(const cBaseObject& other);
+    virtual BaseObject& operator=(const BaseObject& other);
 
     /**
       * \brief  Equality test operator
       */
-    virtual bool operator==(const cBaseObject& other) const;
+    virtual bool operator==(const BaseObject& other) const;
 
     /**
       * \brief  Inequality test operator
       */
-    virtual bool operator!=(const cBaseObject& other) const;
+    virtual bool operator!=(const BaseObject& other) const;
 
     /**
       * \brief  Returns a const pointer to the internally stored name.
@@ -74,7 +74,7 @@ public:
     virtual void setKind(const int kind);
 
     /**
-      * \brief  Serialization operator. This method should be overloaded by the subclasses of cBaseObject.
+      * \brief  Serialization operator. This method should be overloaded by the subclasses of BaseObject.
       * \return
       */
     virtual const char* serialize() const;
@@ -87,7 +87,7 @@ private:
 /**
   * \brief  Really simple writing function.
   */
-std::ostream& operator<<(std::ostream& ost, const cBaseObject& obj);
-std::ostream& operator<<(std::ostream& ost, const cBaseObject* obj);
+std::ostream& operator<<(std::ostream& ost, const BaseObject& obj);
+std::ostream& operator<<(std::ostream& ost, const BaseObject* obj);
 
 #endif // BASEOBJECT_H

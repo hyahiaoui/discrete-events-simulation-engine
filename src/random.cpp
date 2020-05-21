@@ -1,4 +1,4 @@
-#include "random.h"
+#include "Random.h"
 
 #include <cfloat>
 #include <climits>
@@ -6,16 +6,16 @@
 #include <cstdlib>
 #include <ctime>
 
-cRandom* cRandom::generatorInstance = 0;
+Random* Random::generatorInstance = 0;
 
-cRandom* cRandom::Generate()
+Random* Random::Generate()
 {
     if (!generatorInstance)
-        generatorInstance = new cRandom();
+        generatorInstance = new Random();
     return generatorInstance;
 }
 
-cRandom::cRandom()
+Random::Random()
 {
     base = ~(unsigned long)0 - 1; // oxff..fe
     seedsNb = (unsigned long)2096;
@@ -34,12 +34,12 @@ cRandom::cRandom()
     index = 0; // index of first carry
 }
 
-cRandom::~cRandom()
+Random::~Random()
 {
     delete[] seeds;
 }
 
-unsigned long cRandom::getRand()
+unsigned long Random::getRand()
 {
     // t    = a * x_n-r +c_n-1
     // x_n  = (b-1) - t
@@ -52,7 +52,7 @@ unsigned long cRandom::getRand()
     return (result);
 }
 
-long double cRandom::uniform(long double a, long double b)
+long double Random::uniform(long double a, long double b)
 {
     long double uniform_0_1 = (long double)getRand() / (long double)(~(unsigned long)0);
     if (uniform_0_1 == 1)
@@ -60,17 +60,17 @@ long double cRandom::uniform(long double a, long double b)
     return uniform_0_1 * (b - a) + a;
 }
 
-long cRandom::intuniform(long a, long b)
+long Random::intuniform(long a, long b)
 {
     return (getRand() % (b - a + 1) + a);
 }
 
-long double cRandom::exponential(long double lambda)
+long double Random::exponential(long double lambda)
 {
     return -log(uniform(0, 1)) / lambda;
 }
 
-unsigned cRandom::poisson(long double lambda)
+unsigned Random::poisson(long double lambda)
 {
     long double l = exp(-lambda), p = uniform(0, 1);
     unsigned k = 0;
@@ -81,12 +81,12 @@ unsigned cRandom::poisson(long double lambda)
     return (k);
 }
 
-unsigned cRandom::bernoulli(long double p)
+unsigned Random::bernoulli(long double p)
 {
     return (uniform(0, 1) < p ? 1 : 0);
 }
 
-unsigned cRandom::binomial(unsigned n, long double p)
+unsigned Random::binomial(unsigned n, long double p)
 {
     unsigned v = 0;
     for (unsigned i = 0; i < n; ++i)
@@ -94,13 +94,13 @@ unsigned cRandom::binomial(unsigned n, long double p)
     return v;
 }
 
-long double cRandom::normal(long double mean, long double stddev)
+long double Random::normal(long double mean, long double stddev)
 {
     long double z = cos(2 * M_PI * uniform(0, 1)) * sqrt(-2 * log(uniform(0, 1)));
     return mean + stddev * z;
 }
 
-long double cRandom::lognormal(long double mean, long double stddev)
+long double Random::lognormal(long double mean, long double stddev)
 {
     long double mean_log = log(mean) - log(1 + (stddev * stddev) / (mean * mean)) / 2;
     long double stddev_log = sqrt(log(1 + (stddev * stddev) / (mean * mean)));

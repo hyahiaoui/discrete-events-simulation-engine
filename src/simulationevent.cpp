@@ -1,37 +1,37 @@
-#include "simulationevent.h"
-#include "desimulator.h"
+#include "SimulationEvent.h"
+#include "DESimulator.h"
 
 #include <stdexcept>
 
-cSimulationEvent::cSimulationEvent(const tModuleId& creatorId, const std::string& name)
-    : cBaseObject(name)
+SimulationEvent::SimulationEvent(const ModuleId& creatorId, const std::string& name)
+    : BaseObject(name)
     , m_occurrenceTime()
     , m_scheduled(false)
 {
-    m_creationTime = cDESimulator::simTime();
+    m_creationTime = DESimulator::simTime();
     m_creationModule = creatorId;
 }
 
-cSimulationEvent::cSimulationEvent(const cSimulationEvent& other)
-    : cBaseObject()
+SimulationEvent::SimulationEvent(const SimulationEvent& other)
+    : BaseObject()
     , m_occurrenceTime()
     , m_scheduled(false)
 {
-    m_creationTime = cDESimulator::simTime();
+    m_creationTime = DESimulator::simTime();
     operator=(other);
 }
 
-cSimulationEvent::~cSimulationEvent() noexcept(false)
+SimulationEvent::~SimulationEvent() noexcept(false)
 {
     // Added by Yacine Ould Rouis: Give the possibility of deleting scheduled events, when the simulation is finished.
-    if (isScheduled() && cDESimulator::isCurrentlySimulating())
+    if (isScheduled() && DESimulator::isCurrentlySimulating())
         throw std::runtime_error("Destroying still scheduled event.");
 }
 
-cSimulationEvent& cSimulationEvent::operator=(const cSimulationEvent& other)
+SimulationEvent& SimulationEvent::operator=(const SimulationEvent& other)
 {
     if (this != &other) {
-        cBaseObject::operator=(other);
+        BaseObject::operator=(other);
         if (other.isScheduled()) {
             scheduleAt(other.m_occurrenceTime);
         }
@@ -39,47 +39,47 @@ cSimulationEvent& cSimulationEvent::operator=(const cSimulationEvent& other)
     return *this;
 }
 
-bool cSimulationEvent::operator==(const cSimulationEvent& other)
+bool SimulationEvent::operator==(const SimulationEvent& other)
 {
-    if (cBaseObject::operator==(other))
+    if (BaseObject::operator==(other))
         return ((m_scheduled == other.m_scheduled)
             && (m_occurrenceTime == other.m_occurrenceTime));
     else
         return false;
 }
 
-const cSimulationTime& cSimulationEvent::occurrenceTime() const
+const SimulationTime& SimulationEvent::occurrenceTime() const
 {
     return m_occurrenceTime;
 }
 
-void cSimulationEvent::setOccurenceTime(const cSimulationTime& occurenceTime)
+void SimulationEvent::setOccurenceTime(const SimulationTime& occurenceTime)
 {
     m_occurrenceTime = occurenceTime;
 }
 
-void cSimulationEvent::scheduleAt(const cSimulationTime& occurenceTime)
+void SimulationEvent::scheduleAt(const SimulationTime& occurenceTime)
 {
     m_occurrenceTime = occurenceTime;
-    cDESimulator::theSimulator()->scheduleFutureEvent(this);
+    DESimulator::theSimulator()->scheduleFutureEvent(this);
     m_scheduled = true;
 }
 
-bool cSimulationEvent::isScheduled() const
+bool SimulationEvent::isScheduled() const
 {
     return m_scheduled;
 }
 
-void cSimulationEvent::cancelScheduling()
+void SimulationEvent::cancelScheduling()
 {
-    cDESimulator::theSimulator()->cancelFutureEvent(this);
+    DESimulator::theSimulator()->cancelFutureEvent(this);
     m_scheduled = false;
 }
 
-const char* cSimulationEvent::serialize() const
+const char* SimulationEvent::serialize() const
 {
     std::ostringstream outStream;
-    outStream << "cSimulationEvent["
+    outStream << "SimulationEvent["
               << "name=\"" << name() << "\", "
               << "kind=" << kind() << ", "
               << "scheduled=" << (isScheduled() ? "true" : "false") << ", "
@@ -87,12 +87,12 @@ const char* cSimulationEvent::serialize() const
     return outStream.str().c_str();
 }
 
-const cSimulationTime& cSimulationEvent::creationTime() const
+const SimulationTime& SimulationEvent::creationTime() const
 {
     return m_creationTime;
 }
 
-const tModuleId& cSimulationEvent::creationModule() const
+const ModuleId& SimulationEvent::creationModule() const
 {
     return m_creationModule;
 }

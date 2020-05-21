@@ -1,45 +1,46 @@
 #ifndef MODULETIMER_H
 #define MODULETIMER_H
 
+#include "SimulationEvent.h"
 #include "common.h"
-#include "simulationevent.h"
+
 #include <string>
 
-class cSimulationModule;
+class SimulationModule;
 
-class cModuleTimer : public cSimulationEvent {
+class ModuleTimer : public SimulationEvent {
 public:
-    cModuleTimer(const std::string name = std::string());
-    cModuleTimer(const cModuleTimer& other);
+    ModuleTimer(const std::string name = std::string());
+    ModuleTimer(const ModuleTimer& other);
 
-    virtual ~cModuleTimer();
+    virtual ~ModuleTimer();
 
-    virtual cModuleTimer& operator=(const cModuleTimer& other);
+    virtual ModuleTimer& operator=(const ModuleTimer& other);
 
     // Getters
-    virtual tModuleId ownerModuleId() const;
-    virtual cSimulationTime triggerTime() const;
+    virtual ModuleId ownerModuleId() const;
+    virtual SimulationTime triggerTime() const;
     virtual void* attachedData() const;
 
     // Setters
-    virtual void setOwnerModuleId(const tModuleId newOwner);
+    virtual void setOwnerModuleId(const ModuleId newOwner);
     virtual void setAttachedData(void* data);
 
     // Overloaded methods
     /**
       * \brief
       */
-    virtual void scheduleAt(const cSimulationTime& occurenceTime);
+    virtual void scheduleAt(const SimulationTime& occurenceTime);
 
     /**
       * \brief
       */
-    virtual void scheduleAt(const cSimulationTime& occurenceTime, const tModuleId newOwnerModuleId);
+    virtual void scheduleAt(const SimulationTime& occurenceTime, const ModuleId newOwnerModuleId);
 
     /**
       * \brief
       */
-    virtual void scheduleAt(const cSimulationTime& occurenceTime, const cSimulationModule* newOwnerModule);
+    virtual void scheduleAt(const SimulationTime& occurenceTime, const SimulationModule* newOwnerModule);
 
     /**
       * \brief
@@ -58,10 +59,10 @@ protected:
     virtual void handleTriggering();
 
 private:
-    tModuleId m_ownerModuleId;
+    ModuleId m_ownerModuleId;
     void* m_attachedData;
 };
 
-//std::ostream & operator<<(std::ostream & ost, const cModuleTimer & obj);
+//std::ostream & operator<<(std::ostream & ost, const ModuleTimer & obj);
 
 #endif // MODULETIMER_H

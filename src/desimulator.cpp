@@ -1,11 +1,11 @@
-#include "desimulator.h"
+#include "DESimulator.h"
+#include "ModuleTimer.h"
+#include "MovingParticle.h"
 #include "common.h"
-#include "moduletimer.h"
-#include "movingparticle.h"
 
-cDESimulator* cDESimulator::m_simulator = NULL;
+DESimulator* DESimulator::m_simulator = NULL;
 
-cDESimulator::cDESimulator()
+DESimulator::DESimulator()
     : m_simulationPattern(BasedOnModulesBehaviours)
     , m_simulationCurrentTime()
     , m_simulationCurrentProcessedModule(invalidModuleId)
@@ -15,30 +15,30 @@ cDESimulator::cDESimulator()
 {
 }
 
-cDESimulator::~cDESimulator()
+DESimulator::~DESimulator()
 {
     cleanupSimulator();
 }
 
-cDESimulator* cDESimulator::theSimulator()
+DESimulator* DESimulator::theSimulator()
 {
     if (m_simulator == NULL)
-        m_simulator = new cDESimulator();
+        m_simulator = new DESimulator();
 
     return m_simulator;
 }
 
-cSimulationTime cDESimulator::simTime()
+SimulationTime DESimulator::simTime()
 {
     return theSimulator()->m_simulationCurrentTime;
 }
 
-tModuleId cDESimulator::processedModule()
+ModuleId DESimulator::processedModule()
 {
     return theSimulator()->m_simulationCurrentProcessedModule;
 }
 
-void cDESimulator::simulate(const cSimulationTime& maxSimTime, unsigned simulationsNumber)
+void DESimulator::simulate(const SimulationTime& maxSimTime, unsigned simulationsNumber)
 {
     if (!m_simulationGraph)
         throw std::runtime_error("Launching simulation before assigning simulation graph.");
@@ -65,7 +65,7 @@ void cDESimulator::simulate(const cSimulationTime& maxSimTime, unsigned simulati
     }
 }
 
-void cDESimulator::prepareSimulation(unsigned currentSimulationId)
+void DESimulator::prepareSimulation(unsigned currentSimulationId)
 {
     m_simulationCurrentProcessedModule = invalidModuleId;
 
@@ -82,13 +82,13 @@ void cDESimulator::prepareSimulation(unsigned currentSimulationId)
         throw std::runtime_error(exceptionStream.str());
     }
 
-    for (tModuleId initializedModule : m_simulationGraph->vertices()) {
+    for (ModuleId initializedModule : m_simulationGraph->vertices()) {
         m_simulationCurrentProcessedModule = m_simulationGraph->vertex(initializedModule)->id();
         m_simulationGraph->vertex(initializedModule)->sim_getReady();
     }
 }
 
-void cDESimulator::postProcessSimulation(unsigned currentSimulationId)
+void DESimulator::postProcessSimulation(unsigned currentSimulationId)
 {
     // Call post-processing methods of all the modules of this simulation
     if (!m_simulationGraph) {
@@ -103,13 +103,13 @@ void cDESimulator::postProcessSimulation(unsigned currentSimulationId)
         throw std::runtime_error(exceptionStream.str());
     }
 
-    for (tModuleId module : m_simulationGraph->vertices()) {
+    for (ModuleId module : m_simulationGraph->vertices()) {
         m_simulationCurrentProcessedModule = m_simulationGraph->vertex(module)->id();
         m_simulationGraph->vertex(module)->sim_terminate();
     }
 }
 
-void cDESimulator::makeSimulation(const cSimulationTime& maxSimTime, unsigned currentSimulationId)
+void DESimulator::makeSimulation(const SimulationTime& maxSimTime, unsigned currentSimulationId)
 {
     while (1) {
         if (m_simulationEventsQueue.empty())
@@ -122,7 +122,7 @@ void cDESimulator::makeSimulation(const cSimulationTime& maxSimTime, unsigned cu
 
         // 1 -  Get an event (with the smallest simulation time) from the simulation queue,
         //      and remove that event from the queue of future events
-        cSimulationEvent* currentEvent = m_simulationEventsQueue.top();
+        SimulationEvent* currentEvent = m_simulationEventsQueue.top();
         m_simulationEventsQueue.pop();
 
         // 2 -  Check simulator's sanity
@@ -146,7 +146,7 @@ void cDESimulator::makeSimulation(const cSimulationTime& maxSimTime, unsigned cu
         m_simulationCurrentTime = currentEvent->occurrenceTime();
 
         // 4 -  Check if this event is a timer ...
-        cModuleTimer* currentTimer = dynamic_cast<cModuleTimer*>(currentEvent);
+        ModuleTimer* currentTimer = dynamic_cast<ModuleTimer*>(currentEvent);
         if (currentTimer) {
             m_simulationCurrentProcessedModule = currentTimer->ownerModuleId();
             switch (m_simulationPattern) {
@@ -169,7 +169,7 @@ void cDESimulator::makeSimulation(const cSimulationTime& maxSimTime, unsigned cu
         }
 
         // 5-   ... or a moving particle arriving at some module
-        cMovingParticle* currentParticle = dynamic_cast<cMovingParticle*>(currentEvent);
+        MovingParticle* currentParticle = dynamic_cast<MovingParticle*>(currentEvent);
         if (currentParticle) {
             m_simulationCurrentProcessedModule = currentParticle->nextModule();
             switch (m_simulationPattern) {
@@ -198,12 +198,12 @@ void cDESimulator::makeSimulation(const cSimulationTime& maxSimTime, unsigned cu
     }
 }
 
-cDESimulator::SimulationPattern cDESimulator::simulationPattern()
+DESimulator::SimulationPattern DESimulator::simulationPattern()
 {
     return theSimulator()->m_simulationPattern;
 }
 
-void cDESimulator::setSimulationPattern(const cDESimulator::SimulationPattern newPattern)
+void DESimulator::setSimulationPattern(const DESimulator::SimulationPattern newPattern)
 {
     switch (newPattern) {
     case BasedOnModulesBehaviours:
@@ -218,23 +218,23 @@ void cDESimulator::setSimulationPattern(const cDESimulator::SimulationPattern ne
     }
 }
 
-cDESimulator::SimulationStage cDESimulator::simulationStage()
+DESimulator::SimulationStage DESimulator::simulationStage()
 {
     return theSimulator()->m_currentSimulationStage;
 }
 
-bool cDESimulator::isCurrentlySimulating()
+bool DESimulator::isCurrentlySimulating()
 {
     return (theSimulator()->m_currentSimulationStage != OutOfSimulationStage);
 }
 
-void cDESimulator::initiateSimulator(cDESimulator::SimulationGraph* const simulationGraph)
+void DESimulator::initiateSimulator(DESimulator::SimulationGraph* const simulationGraph)
 {
     cleanupSimulator();
 
     if (simulationGraph) {
         m_simulationGraph = simulationGraph;
-        for (tModuleId moduleId : m_simulationGraph->vertices()) {
+        for (ModuleId moduleId : m_simulationGraph->vertices()) {
             m_simulationGraph->vertex(moduleId)->sim_setNeighbours(
                 m_simulationGraph->predecessors(moduleId),
                 m_simulationGraph->successors(moduleId));
@@ -245,7 +245,7 @@ void cDESimulator::initiateSimulator(cDESimulator::SimulationGraph* const simula
     m_simulationCurrentTime = 0;
 }
 
-void cDESimulator::cleanupSimulator()
+void DESimulator::cleanupSimulator()
 {
     if (isCurrentlySimulating()) {
         std::ostringstream exceptionStream;
@@ -254,7 +254,7 @@ void cDESimulator::cleanupSimulator()
     }
 
     while (!m_simulationEventsQueue.empty()) {
-        cSimulationEvent* event = m_simulationEventsQueue.top();
+        SimulationEvent* event = m_simulationEventsQueue.top();
         m_simulationEventsQueue.pop();
         delete event;
     }
@@ -265,7 +265,7 @@ void cDESimulator::cleanupSimulator()
     m_simulationCurrentTime = 0;
 }
 
-void cDESimulator::scheduleFutureEvent(cSimulationEvent* futureEvent)
+void DESimulator::scheduleFutureEvent(SimulationEvent* futureEvent)
 {
     if (!isCurrentlySimulating()) {
         std::ostringstream exceptionStream;
@@ -276,7 +276,7 @@ void cDESimulator::scheduleFutureEvent(cSimulationEvent* futureEvent)
     m_simulationEventsQueue.push(futureEvent);
 }
 
-void cDESimulator::cancelFutureEvent(cSimulationEvent* futureEventToCancel)
+void DESimulator::cancelFutureEvent(SimulationEvent* futureEventToCancel)
 {
     if (!isCurrentlySimulating()) {
         std::ostringstream exceptionStream;
@@ -287,8 +287,8 @@ void cDESimulator::cancelFutureEvent(cSimulationEvent* futureEventToCancel)
     if (!futureEventToCancel->isScheduled())
         return;
 
-    cSimulationEvent* tmpEvent;
-    cDESimulator::tSimulationEventQueue tmpQueue;
+    SimulationEvent* tmpEvent;
+    DESimulator::tSimulationEventQueue tmpQueue;
     while (1) {
         if (m_simulationEventsQueue.empty())
             break;

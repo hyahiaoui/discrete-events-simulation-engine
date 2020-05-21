@@ -1,78 +1,78 @@
-#include "moduletimer.h"
-#include "desimulator.h"
-#include "simulationmodule.h"
+#include "ModuleTimer.h"
+#include "DESimulator.h"
+#include "SimulationModule.h"
 
 #include <stdexcept>
 
-cModuleTimer::cModuleTimer(const std::string name)
-    : cSimulationEvent(cDESimulator::processedModule(), name)
-    , m_ownerModuleId(cDESimulator::processedModule())
+ModuleTimer::ModuleTimer(const std::string name)
+    : SimulationEvent(DESimulator::processedModule(), name)
+    , m_ownerModuleId(DESimulator::processedModule())
     , m_attachedData(NULL)
 {
 }
 
-cModuleTimer::cModuleTimer(const cModuleTimer& other)
-    : cSimulationEvent(cDESimulator::processedModule(), other.name())
-    , m_ownerModuleId(cDESimulator::processedModule())
+ModuleTimer::ModuleTimer(const ModuleTimer& other)
+    : SimulationEvent(DESimulator::processedModule(), other.name())
+    , m_ownerModuleId(DESimulator::processedModule())
     , m_attachedData(NULL)
 {
     operator=(other);
 }
 
-cModuleTimer::~cModuleTimer()
+ModuleTimer::~ModuleTimer()
 {
 }
 
-cModuleTimer& cModuleTimer::operator=(const cModuleTimer& other)
+ModuleTimer& ModuleTimer::operator=(const ModuleTimer& other)
 {
     if (this != &other) {
-        cSimulationEvent::operator=(other);
+        SimulationEvent::operator=(other);
         m_attachedData = other.m_attachedData;
         m_ownerModuleId = other.ownerModuleId();
     }
     return *this;
 }
 
-cSimulationTime cModuleTimer::triggerTime() const
+SimulationTime ModuleTimer::triggerTime() const
 {
-    return cSimulationEvent::occurrenceTime();
+    return SimulationEvent::occurrenceTime();
 }
 
-tModuleId cModuleTimer::ownerModuleId() const
+ModuleId ModuleTimer::ownerModuleId() const
 {
     return m_ownerModuleId;
 }
 
-void* cModuleTimer::attachedData() const
+void* ModuleTimer::attachedData() const
 {
     return m_attachedData;
 }
 
-void cModuleTimer::setOwnerModuleId(const tModuleId newOwner)
+void ModuleTimer::setOwnerModuleId(const ModuleId newOwner)
 {
     m_ownerModuleId = newOwner;
 }
 
-void cModuleTimer::setAttachedData(void* data)
+void ModuleTimer::setAttachedData(void* data)
 {
     m_attachedData = data;
 }
 
-void cModuleTimer::scheduleAt(const cSimulationTime& occurenceTime)
+void ModuleTimer::scheduleAt(const SimulationTime& occurenceTime)
 {
     if (ownerModuleId() == invalidModuleId)
         throw std::runtime_error("Trying to schedule a timer not attached to a module.");
 
-    cSimulationEvent::scheduleAt(occurenceTime);
+    SimulationEvent::scheduleAt(occurenceTime);
 }
 
-void cModuleTimer::scheduleAt(const cSimulationTime& occurenceTime, const tModuleId newOwnerModuleId)
+void ModuleTimer::scheduleAt(const SimulationTime& occurenceTime, const ModuleId newOwnerModuleId)
 {
     setOwnerModuleId(newOwnerModuleId);
     scheduleAt(occurenceTime);
 }
 
-void cModuleTimer::scheduleAt(const cSimulationTime& occurenceTime, const cSimulationModule* newOwnerModule)
+void ModuleTimer::scheduleAt(const SimulationTime& occurenceTime, const SimulationModule* newOwnerModule)
 {
     if (!newOwnerModule)
         throw std::runtime_error("Trying to schedule a timer not attached to a module.");
@@ -80,22 +80,22 @@ void cModuleTimer::scheduleAt(const cSimulationTime& occurenceTime, const cSimul
     scheduleAt(occurenceTime, newOwnerModule->id());
 }
 
-void cModuleTimer::sim_handleTriggering()
+void ModuleTimer::sim_handleTriggering()
 {
-    if (cDESimulator::simulationPattern() == cDESimulator::BasedOnModulesBehaviours)
+    if (DESimulator::simulationPattern() == DESimulator::BasedOnModulesBehaviours)
         throw std::runtime_error("Invoking timer triggering while doing modules behaviours based simulation.");
     handleTriggering();
 }
 
-void cModuleTimer::handleTriggering()
+void ModuleTimer::handleTriggering()
 {
     // Empty function. Must be overloaded to implement desired behaviour
 }
 
-const char* cModuleTimer::serialize() const
+const char* ModuleTimer::serialize() const
 {
     std::ostringstream outStream;
-    outStream << "cModuleTimer["
+    outStream << "ModuleTimer["
               << "name=\"" << name() << "\", "
               << "kind=" << kind() << ", "
               << "owner=" << ownerModuleId() << ", "

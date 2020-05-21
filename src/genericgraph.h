@@ -1,5 +1,5 @@
 /**
- * \file    genericgraph.h
+ * \file    GenericGraph.h
  * \brief   Declaration and implementation of generic graph class
  * \date    June, 27th, 2011
  * \author  Yahiaoui H.
@@ -8,25 +8,24 @@
 #ifndef GENERICGRAPH_H
 #define GENERICGRAPH_H
 
-#include <cstdlib>
-#include <map>
-#include <set>
-#include <stdexcept>
-#include <vector>
+#include "UniqueIDGenerator.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <cstring>
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <set>
 #include <sstream>
-
-#include "uniqueidgenerator.h"
+#include <stdexcept>
+#include <vector>
 
 /**
   * \brief
   */
 template <typename V, typename A, bool DirectedGraph = true, class CompareV = std::less<V>>
-class cGenericGraph {
+class GenericGraph {
 public: // Types and consts
     typedef unsigned long VertexID;
     typedef std::pair<VertexID, VertexID> ArcID;
@@ -43,27 +42,27 @@ public: // Methods
       * \brief  Default constructor
       * \param  graphName   the build graph's name
       */
-    cGenericGraph(const char* graphName = 0);
+    GenericGraph(const char* graphName = 0);
 
     /**
       * \brief  Copy constructor
       */
-    cGenericGraph(const cGenericGraph& other);
+    GenericGraph(const GenericGraph& other);
 
     /**
       * \brief  Destructor
       */
-    virtual ~cGenericGraph();
+    virtual ~GenericGraph();
 
     /**
       * \brief  Assign operator
       */
-    cGenericGraph& operator=(const cGenericGraph& other);
+    GenericGraph& operator=(const GenericGraph& other);
 
     /**
       * \brief  Duplication operator
       */
-    cGenericGraph* dup();
+    GenericGraph* dup();
 
     /**
       * \brief
@@ -444,14 +443,14 @@ private:
 
 // Assignation of static attributs values
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-const typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexID cGenericGraph<V, A, DirectedGraph, CompareV>::IllegalVertexID = ~(VertexID)(0);
+const typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexID GenericGraph<V, A, DirectedGraph, CompareV>::IllegalVertexID = ~(VertexID)(0);
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-const typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::IllegalArcID = cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID(IllegalVertexID, IllegalVertexID);
+const typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::IllegalArcID = GenericGraph<V, A, DirectedGraph, CompareV>::ArcID(IllegalVertexID, IllegalVertexID);
 
 // Constructor
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-cGenericGraph<V, A, DirectedGraph, CompareV>::cGenericGraph(const char* graphName)
+GenericGraph<V, A, DirectedGraph, CompareV>::GenericGraph(const char* graphName)
     : m_directed(DirectedGraph)
     , m_arcsNumber(0)
     , m_verticesData()
@@ -463,7 +462,7 @@ cGenericGraph<V, A, DirectedGraph, CompareV>::cGenericGraph(const char* graphNam
 
 // Copy Constructor
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-cGenericGraph<V, A, DirectedGraph, CompareV>::cGenericGraph(const cGenericGraph<V, A, DirectedGraph, CompareV>& other)
+GenericGraph<V, A, DirectedGraph, CompareV>::GenericGraph(const GenericGraph<V, A, DirectedGraph, CompareV>& other)
     : m_directed(DirectedGraph)
     , m_arcsNumber(0)
     , m_verticesData()
@@ -474,13 +473,13 @@ cGenericGraph<V, A, DirectedGraph, CompareV>::cGenericGraph(const cGenericGraph<
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-const char* cGenericGraph<V, A, DirectedGraph, CompareV>::name() const
+const char* GenericGraph<V, A, DirectedGraph, CompareV>::name() const
 {
     return m_graphName;
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-void cGenericGraph<V, A, DirectedGraph, CompareV>::setName(const char* graphName)
+void GenericGraph<V, A, DirectedGraph, CompareV>::setName(const char* graphName)
 {
     if (m_graphName) {
         delete[] m_graphName;
@@ -494,29 +493,29 @@ void cGenericGraph<V, A, DirectedGraph, CompareV>::setName(const char* graphName
 
 // Assign operator
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-cGenericGraph<V, A, DirectedGraph, CompareV>& cGenericGraph<V, A, DirectedGraph, CompareV>::operator=(const cGenericGraph<V, A, DirectedGraph, CompareV>& other)
+GenericGraph<V, A, DirectedGraph, CompareV>& GenericGraph<V, A, DirectedGraph, CompareV>::operator=(const GenericGraph<V, A, DirectedGraph, CompareV>& other)
 {
     if (this != &other) {
         clear();
-        typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet arcsSet = other.arcs();
-        for (typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet::const_iterator arcIt = arcsSet.begin(); arcIt != arcsSet.end(); arcIt++)
+        typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet arcsSet = other.arcs();
+        for (typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet::const_iterator arcIt = arcsSet.begin(); arcIt != arcsSet.end(); arcIt++)
             add(*arcIt, other.arc(*arcIt), true);
 
-        typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet verticesSet = other.vertices();
-        for (typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet::const_iterator vertexIt = verticesSet.begin(); vertexIt != verticesSet.end(); vertexIt++)
+        typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet verticesSet = other.vertices();
+        for (typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet::const_iterator vertexIt = verticesSet.begin(); vertexIt != verticesSet.end(); vertexIt++)
             setVertex(*vertexIt, other.vertex(*vertexIt));
     }
     return *this;
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-cGenericGraph<V, A, DirectedGraph, CompareV>* cGenericGraph<V, A, DirectedGraph, CompareV>::dup()
+GenericGraph<V, A, DirectedGraph, CompareV>* GenericGraph<V, A, DirectedGraph, CompareV>::dup()
 {
-    return (new cGenericGraph<V, A, DirectedGraph, CompareV>(*this));
+    return (new GenericGraph<V, A, DirectedGraph, CompareV>(*this));
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-void cGenericGraph<V, A, DirectedGraph, CompareV>::clear()
+void GenericGraph<V, A, DirectedGraph, CompareV>::clear()
 {
     m_verticesData.clear();
     for (typename VerticeDataSet::iterator it = m_verticesArcs.begin(); it != m_verticesArcs.end();) // Parse all vertices data ...
@@ -531,7 +530,7 @@ void cGenericGraph<V, A, DirectedGraph, CompareV>::clear()
 
 // Destructor
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-cGenericGraph<V, A, DirectedGraph, CompareV>::~cGenericGraph()
+GenericGraph<V, A, DirectedGraph, CompareV>::~GenericGraph()
 {
     clear();
     if (m_graphName)
@@ -539,7 +538,7 @@ cGenericGraph<V, A, DirectedGraph, CompareV>::~cGenericGraph()
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexID cGenericGraph<V, A, DirectedGraph, CompareV>::add(const V& newVertex, const VertexID newVertexId)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexID GenericGraph<V, A, DirectedGraph, CompareV>::add(const V& newVertex, const VertexID newVertexId)
 {
     if (newVertexId == IllegalVertexID) // invalid vertex id
     {
@@ -547,7 +546,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexID cGenericGraph<V,
         // if the vertex does not exist, insert it with an id generated automatically
         if (vertexIt == m_verticesData.end()) // If the vertex does not exist , ...
         {
-            VertexID insertId = cUniqueIDGenerator<VertexID>::Generator()->newId();
+            VertexID insertId = UniqueIDGenerator<VertexID>::Generator()->newId();
             VertexData newVertexData;
             newVertexData.vertexSuccessors.clear();
             newVertexData.vertexPredecessors.clear();
@@ -579,14 +578,14 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexID cGenericGraph<V,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::add(const V& vertex1, const V& vertex2, bool addVertexIfMissing)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::add(const V& vertex1, const V& vertex2, bool addVertexIfMissing)
 {
     A defaultArc;
     return add(vertex1, vertex2, defaultArc, addVertexIfMissing);
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::add(const V& vertex1, const V& vertex2, const A& newArc, bool addVertexIfMissing)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::add(const V& vertex1, const V& vertex2, const A& newArc, bool addVertexIfMissing)
 {
     VertexID vertex1Id, vertex2Id;
     typename Vertex2VertexID::iterator vertex1DataIt = m_verticesData.find(vertex1);
@@ -611,14 +610,14 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::add(const VertexID vertex1Id, const VertexID vertex2Id, bool addVertexIfMissing)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::add(const VertexID vertex1Id, const VertexID vertex2Id, bool addVertexIfMissing)
 {
     A defaultArc;
     return add(vertex1Id, vertex2Id, defaultArc, addVertexIfMissing);
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::add(const VertexID vertex1Id, const VertexID vertex2Id, const A& newArc, bool addVertexIfMissing)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::add(const VertexID vertex1Id, const VertexID vertex2Id, const A& newArc, bool addVertexIfMissing)
 {
     typename VerticeDataSet::iterator vertex1It = m_verticesArcs.find(vertex1Id);
     if (vertex1It == m_verticesArcs.end()) {
@@ -650,20 +649,20 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::add(const ArcID& arcId, bool addVertexIfMissing)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::add(const ArcID& arcId, bool addVertexIfMissing)
 {
     A defaultArc;
     return add(arcId.first, arcId.second, defaultArc, addVertexIfMissing);
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::add(const ArcID& arcId, const A& newArc, bool addVertexIfMissing)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::add(const ArcID& arcId, const A& newArc, bool addVertexIfMissing)
 {
     return add(arcId.first, arcId.second, newArc, addVertexIfMissing);
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexID cGenericGraph<V, A, DirectedGraph, CompareV>::vertex(const V& vertex) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexID GenericGraph<V, A, DirectedGraph, CompareV>::vertex(const V& vertex) const
 {
     typename Vertex2VertexID::const_iterator vertexDataIt = m_verticesData.find(vertex);
     if (vertexDataIt == m_verticesData.end())
@@ -673,7 +672,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexID cGenericGraph<V,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-const V& cGenericGraph<V, A, DirectedGraph, CompareV>::vertex(const VertexID vertexId) const
+const V& GenericGraph<V, A, DirectedGraph, CompareV>::vertex(const VertexID vertexId) const
 {
     typename VerticeDataSet::const_iterator vertexIt = m_verticesArcs.find(vertexId);
     if (vertexIt == m_verticesArcs.end()) {
@@ -686,7 +685,7 @@ const V& cGenericGraph<V, A, DirectedGraph, CompareV>::vertex(const VertexID ver
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::arc(const V& vertex1, const V& vertex2) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::arc(const V& vertex1, const V& vertex2) const
 {
     typename Vertex2VertexID::const_iterator vertex1DataIt = m_verticesData.find(vertex1);
     if (vertex1DataIt == m_verticesData.end())
@@ -700,7 +699,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A, DirectedGraph, CompareV>::arc(const VertexID vertex1Id, const VertexID vertex2Id) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcID GenericGraph<V, A, DirectedGraph, CompareV>::arc(const VertexID vertex1Id, const VertexID vertex2Id) const
 {
     typename VerticeDataSet::const_iterator vertex1It = m_verticesArcs.find(vertex1Id);
     if (vertex1It == m_verticesArcs.end())
@@ -718,7 +717,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcID cGenericGraph<V, A,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-A cGenericGraph<V, A, DirectedGraph, CompareV>::arc(const ArcID& arcId) const
+A GenericGraph<V, A, DirectedGraph, CompareV>::arc(const ArcID& arcId) const
 {
     typename VerticeDataSet::const_iterator firstVertexIt = m_verticesArcs.find(arcId.first);
     if (firstVertexIt == m_verticesArcs.end()) {
@@ -746,19 +745,19 @@ A cGenericGraph<V, A, DirectedGraph, CompareV>::arc(const ArcID& arcId) const
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexID cGenericGraph<V, A, DirectedGraph, CompareV>::arcTail(const ArcID& arcId) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexID GenericGraph<V, A, DirectedGraph, CompareV>::arcTail(const ArcID& arcId) const
 {
     return arcId.first;
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexID cGenericGraph<V, A, DirectedGraph, CompareV>::arcHead(const ArcID& arcId) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexID GenericGraph<V, A, DirectedGraph, CompareV>::arcHead(const ArcID& arcId) const
 {
     return arcId.second;
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph<V, A, DirectedGraph, CompareV>::vertices() const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet GenericGraph<V, A, DirectedGraph, CompareV>::vertices() const
 {
     VertexIDSet verticesSet;
     for (typename VerticeDataSet::const_iterator it = m_verticesArcs.begin(); it != m_verticesArcs.end(); it++)
@@ -767,7 +766,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet cGenericGraph<V, A, DirectedGraph, CompareV>::arcs() const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet GenericGraph<V, A, DirectedGraph, CompareV>::arcs() const
 {
     ArcIDSet arcsSet;
     for (typename VerticeDataSet::const_iterator it = m_verticesArcs.begin(); it != m_verticesArcs.end(); it++) // Parse all vertices ...
@@ -777,7 +776,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet cGenericGraph<V,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet cGenericGraph<V, A, DirectedGraph, CompareV>::arcs(const VertexID vertexId) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet GenericGraph<V, A, DirectedGraph, CompareV>::arcs(const VertexID vertexId) const
 {
     ArcIDSet arcsSet;
     typename VerticeDataSet::const_iterator vertexIt = m_verticesArcs.find(vertexId);
@@ -788,7 +787,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet cGenericGraph<V,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet cGenericGraph<V, A, DirectedGraph, CompareV>::arcs(const V& vertex) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet GenericGraph<V, A, DirectedGraph, CompareV>::arcs(const V& vertex) const
 {
     if (m_verticesData.find(vertex) != m_verticesData.end())
         return arcs(m_verticesData.find(vertex)->second);
@@ -797,7 +796,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::ArcIDSet cGenericGraph<V,
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph<V, A, DirectedGraph, CompareV>::successors(const VertexID vertexId) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet GenericGraph<V, A, DirectedGraph, CompareV>::successors(const VertexID vertexId) const
 {
     VertexIDSet verticesSet;
     typename VerticeDataSet::const_iterator vertexIt = m_verticesArcs.find(vertexId);
@@ -808,7 +807,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph<V, A, DirectedGraph, CompareV>::successors(const V& vertex) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet GenericGraph<V, A, DirectedGraph, CompareV>::successors(const V& vertex) const
 {
     if (m_verticesData.find(vertex) != m_verticesData.end())
         return successors(m_verticesData.find(vertex)->second);
@@ -817,7 +816,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph<V, A, DirectedGraph, CompareV>::predecessors(const VertexID vertexId) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet GenericGraph<V, A, DirectedGraph, CompareV>::predecessors(const VertexID vertexId) const
 {
     typename VerticeDataSet::const_iterator vertexIt = m_verticesArcs.find(vertexId);
     if (vertexIt != m_verticesArcs.end())
@@ -827,7 +826,7 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph<V, A, DirectedGraph, CompareV>::predecessors(const V& vertex) const
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet GenericGraph<V, A, DirectedGraph, CompareV>::predecessors(const V& vertex) const
 {
     if (m_verticesData.find(vertex) != m_verticesData.end())
         return predecessors(m_verticesData.find(vertex)->second);
@@ -836,55 +835,55 @@ typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDSet cGenericGraph
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-unsigned long cGenericGraph<V, A, DirectedGraph, CompareV>::verticesNb() const
+unsigned long GenericGraph<V, A, DirectedGraph, CompareV>::verticesNb() const
 {
     return m_verticesData.size();
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-unsigned long cGenericGraph<V, A, DirectedGraph, CompareV>::arcsNb() const
+unsigned long GenericGraph<V, A, DirectedGraph, CompareV>::arcsNb() const
 {
     return m_arcsNumber;
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-unsigned long cGenericGraph<V, A, DirectedGraph, CompareV>::arcsNb(const VertexID vertexId) const
+unsigned long GenericGraph<V, A, DirectedGraph, CompareV>::arcsNb(const VertexID vertexId) const
 {
     return arcs(vertexId).size();
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-unsigned long cGenericGraph<V, A, DirectedGraph, CompareV>::arcsNb(const V& vertex) const
+unsigned long GenericGraph<V, A, DirectedGraph, CompareV>::arcsNb(const V& vertex) const
 {
     return arcs(vertex).size();
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-unsigned long cGenericGraph<V, A, DirectedGraph, CompareV>::successorsNb(const VertexID vertexId) const
+unsigned long GenericGraph<V, A, DirectedGraph, CompareV>::successorsNb(const VertexID vertexId) const
 {
     return successors(vertexId).size();
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-unsigned long cGenericGraph<V, A, DirectedGraph, CompareV>::successorsNb(const V& vertex) const
+unsigned long GenericGraph<V, A, DirectedGraph, CompareV>::successorsNb(const V& vertex) const
 {
     return successors(vertex).size();
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-unsigned long cGenericGraph<V, A, DirectedGraph, CompareV>::predecessorsNb(const VertexID vertexId) const
+unsigned long GenericGraph<V, A, DirectedGraph, CompareV>::predecessorsNb(const VertexID vertexId) const
 {
     return predecessors(vertexId).size();
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-unsigned long cGenericGraph<V, A, DirectedGraph, CompareV>::predecessorsNb(const V& vertex) const
+unsigned long GenericGraph<V, A, DirectedGraph, CompareV>::predecessorsNb(const V& vertex) const
 {
     return predecessors(vertex).size();
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-void cGenericGraph<V, A, DirectedGraph, CompareV>::setVertex(const VertexID vertexId, const V& vertexData)
+void GenericGraph<V, A, DirectedGraph, CompareV>::setVertex(const VertexID vertexId, const V& vertexData)
 {
     typename VerticeDataSet::iterator vertexIt = m_verticesArcs.find(vertexId);
     if (vertexIt == m_verticesArcs.end())
@@ -898,42 +897,42 @@ void cGenericGraph<V, A, DirectedGraph, CompareV>::setVertex(const VertexID vert
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-void cGenericGraph<V, A, DirectedGraph, CompareV>::setArc(const ArcID& arcId, const A& arcData)
+void GenericGraph<V, A, DirectedGraph, CompareV>::setArc(const ArcID& arcId, const A& arcData)
 {
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::isEmpty() const
+bool GenericGraph<V, A, DirectedGraph, CompareV>::isEmpty() const
 {
     return m_verticesArcs.empty();
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::exists(const V& vertex) const
+bool GenericGraph<V, A, DirectedGraph, CompareV>::exists(const V& vertex) const
 {
     return (m_verticesData.find(vertex) != m_verticesData.end());
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::exists(const VertexID vertexId) const
+bool GenericGraph<V, A, DirectedGraph, CompareV>::exists(const VertexID vertexId) const
 {
     return (m_verticesArcs.find(vertexId) != m_verticesArcs.end());
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::exists(const V& vertex1, const V& vertex2) const
+bool GenericGraph<V, A, DirectedGraph, CompareV>::exists(const V& vertex1, const V& vertex2) const
 {
     return (arc(vertex1, vertex2) != IllegalArcID);
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::exists(const VertexID vertex1Id, const VertexID vertex2Id) const
+bool GenericGraph<V, A, DirectedGraph, CompareV>::exists(const VertexID vertex1Id, const VertexID vertex2Id) const
 {
     return (arc(vertex1Id, vertex2Id) != IllegalArcID);
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::exists(const ArcID& arcId) const
+bool GenericGraph<V, A, DirectedGraph, CompareV>::exists(const ArcID& arcId) const
 {
     typename VerticeDataSet::const_iterator firstVertexIt = m_verticesArcs.find(arcId.first);
     if (firstVertexIt == m_verticesArcs.end())
@@ -948,7 +947,7 @@ bool cGenericGraph<V, A, DirectedGraph, CompareV>::exists(const ArcID& arcId) co
 
 // Removal methods
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const V& vertex)
+bool GenericGraph<V, A, DirectedGraph, CompareV>::remove(const V& vertex)
 {
     typename Vertex2VertexID::iterator vertexDataIt = m_verticesData.find(vertex);
     if (vertexDataIt == m_verticesData.end())
@@ -958,7 +957,7 @@ bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const V& vertex)
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const VertexID vertexId)
+bool GenericGraph<V, A, DirectedGraph, CompareV>::remove(const VertexID vertexId)
 {
     typename VerticeDataSet::iterator vertexIt = m_verticesArcs.find(vertexId);
     if (vertexIt == m_verticesArcs.end())
@@ -988,7 +987,7 @@ bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const VertexID vertexI
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const ArcID& arcId)
+bool GenericGraph<V, A, DirectedGraph, CompareV>::remove(const ArcID& arcId)
 {
     typename VerticeDataSet::const_iterator firstVertexIt = m_verticesArcs.find(arcId.first);
     if (firstVertexIt == m_verticesArcs.end())
@@ -1002,7 +1001,7 @@ bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const ArcID& arcId)
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const V& vertex1, const V& vertex2)
+bool GenericGraph<V, A, DirectedGraph, CompareV>::remove(const V& vertex1, const V& vertex2)
 {
     typename Vertex2VertexID::iterator vertex1DataIt = m_verticesData.find(vertex1);
     if (vertex1DataIt == m_verticesData.end())
@@ -1016,7 +1015,7 @@ bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const V& vertex1, cons
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const VertexID vertex1Id, const VertexID vertex2Id)
+bool GenericGraph<V, A, DirectedGraph, CompareV>::remove(const VertexID vertex1Id, const VertexID vertex2Id)
 {
     typename VerticeDataSet::iterator vertex1It = m_verticesArcs.find(vertex1Id);
     if (vertex1It == m_verticesArcs.end())
@@ -1042,20 +1041,20 @@ bool cGenericGraph<V, A, DirectedGraph, CompareV>::remove(const VertexID vertex1
 
 /*
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDPath  cGenericGraph<V, A, DirectedGraph, CompareV>::shortestPath(const VertexID sourceVertexId, const VertexID destVertexId)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDPath  GenericGraph<V, A, DirectedGraph, CompareV>::shortestPath(const VertexID sourceVertexId, const VertexID destVertexId)
 {
     // TODO
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-typename cGenericGraph<V, A, DirectedGraph, CompareV>::VertexIDPath  cGenericGraph<V, A, DirectedGraph, CompareV>::shortestPath(const V & sourceVertex, const V & destVertex)
+typename GenericGraph<V, A, DirectedGraph, CompareV>::VertexIDPath  GenericGraph<V, A, DirectedGraph, CompareV>::shortestPath(const V & sourceVertex, const V & destVertex)
 {
     // TODO
 }
 //*/
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::save(const char* writeFileName) const
+bool GenericGraph<V, A, DirectedGraph, CompareV>::save(const char* writeFileName) const
 {
     std::fstream outFile;
     outFile.open(writeFileName, std::ios_base::out | std::ios_base::trunc);
@@ -1069,7 +1068,7 @@ bool cGenericGraph<V, A, DirectedGraph, CompareV>::save(const char* writeFileNam
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool cGenericGraph<V, A, DirectedGraph, CompareV>::save(std::ostream& ost) const
+bool GenericGraph<V, A, DirectedGraph, CompareV>::save(std::ostream& ost) const
 {
     std::string indentStr[5] = {
         "",
@@ -1121,13 +1120,13 @@ bool cGenericGraph<V, A, DirectedGraph, CompareV>::save(std::ostream& ost) const
 
 /*
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool  cGenericGraph<V, A, DirectedGraph, CompareV>::load(const char *readFileName)
+bool  GenericGraph<V, A, DirectedGraph, CompareV>::load(const char *readFileName)
 {
     // \todo Implement graph loading from xml file method
 }
 
 template <typename V, typename A, bool DirectedGraph, class CompareV>
-bool  cGenericGraph<V, A, DirectedGraph, CompareV>::load(std::ostream &ost)
+bool  GenericGraph<V, A, DirectedGraph, CompareV>::load(std::ostream &ost)
 {
     // \todo Implement graph loading from xml file method
 }

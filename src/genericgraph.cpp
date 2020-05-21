@@ -1,1 +1,1 @@
-#include "genericgraph.h"
+#include "GenericGraph.h"

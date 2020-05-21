@@ -8,7 +8,7 @@
   * Each time its method 'newId' is invoked, it creates a new, unqiue, ID for the specified type.
   */
 template <typename T>
-class cUniqueIDGenerator {
+class UniqueIDGenerator {
 public:
     /**
       * \brief  Builds and returns a new unique ID of type T
@@ -47,27 +47,27 @@ public:
     /**
       * \brief  Returns a pointer to the singleton object to request unique ID of type T
       */
-    inline static cUniqueIDGenerator<T>* Generator()
+    inline static UniqueIDGenerator<T>* Generator()
     {
         if (singleInstance == 0)
-            singleInstance = new cUniqueIDGenerator<T>;
+            singleInstance = new UniqueIDGenerator<T>;
         return singleInstance;
     }
 
 private:
-    static cUniqueIDGenerator<T>* singleInstance;
+    static UniqueIDGenerator<T>* singleInstance;
 
     unsigned long generatedNb;
     T nextId;
 
     // Constructor
-    cUniqueIDGenerator()
+    UniqueIDGenerator()
     {
         reset();
     }
 };
 
 template <typename T>
-cUniqueIDGenerator<T>* cUniqueIDGenerator<T>::singleInstance = 0;
+UniqueIDGenerator<T>* UniqueIDGenerator<T>::singleInstance = 0;
 
 #endif // UNIQUEIDGENERATOR_H

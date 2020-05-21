@@ -1,20 +1,19 @@
-#include <iostream>
-#include <sstream>
+#include "BaseObject.h"
+#include "GenericGraph.h"
+#include "Random.h"
+#include "RandomVariable.h"
+#include "SimulationTime.h"
+#include "TestDESimulator.h"
+#include "UniqueIDGenerator.h"
+#include "common.h"
 
 #include <climits>
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <iostream>
+#include <sstream>
 #include <vector>
-
-#include "baseobject.h"
-#include "common.h"
-#include "genericgraph.h"
-#include "random.h"
-#include "randomvariable.h"
-#include "simulationtime.h"
-#include "test_desimulator.h"
-#include "uniqueidgenerator.h"
 
 #define MYMAX 60
 //#define DEBUG
@@ -23,7 +22,7 @@
 void testSimulationTime()
 {
     std::stringstream timeAsStr;
-    cSimulationTime st, oldst;
+    SimulationTime st, oldst;
 
     std::cout.precision(24);
     for (int i = 0; i < 10; i++) {
@@ -48,7 +47,7 @@ void testSimulationTime()
         std::cout << "'" << st << "' + '" << oldst << "' = '" << st + oldst << "'." << std::endl;
     }
 
-    cSimulationTime testtime;
+    SimulationTime testtime;
     testtime.fromStr("6h6m6s");
     std::cout << "============================" << std::endl;
     std::cout << "time is " << testtime << std::endl
@@ -61,7 +60,7 @@ void testSimulationTime()
 
 void testBaseObject()
 {
-    cBaseObject ob1, ob2("hi"), ob3("himynameiswalter");
+    BaseObject ob1, ob2("hi"), ob3("himynameiswalter");
 
     std::cout << "First object is '" << ob1.name() << "'." << std::endl;
     std::cout << "Second object is '" << ob2.name() << "'." << std::endl;
@@ -88,7 +87,7 @@ void testRandom()
         tab[i] = 0;
 
     for (long long i = 0; i < 1000000; i++) {
-        long double l = 10 * cRandom::Generate()->uniform(0, 1);
+        long double l = 10 * Random::Generate()->uniform(0, 1);
         if ((l < 0) || (l >= 10)) {
             std::cout << "l=" << l << std::endl;
             continue;
@@ -108,7 +107,7 @@ void testDistributionRandom()
 {
     unsigned long nb1 = 0, nb0 = 0;
     for (long long i = 0; i < 10000000; i++) {
-        if (cRandom::Generate()->bernoulli(0.66666666) == 0)
+        if (Random::Generate()->bernoulli(0.66666666) == 0)
             ++nb0;
         else
             ++nb1;
@@ -121,8 +120,8 @@ void testIDGenerator()
 {
     for (long i = 0; i < 1000; i++)
         std::cout << i << " : "
-                  << " module= " << cUniqueIDGenerator<tModuleId>::Generator()->newId()
-                  << " client= " << cUniqueIDGenerator<tParticleId>::Generator()->newId()
+                  << " module= " << UniqueIDGenerator<ModuleId>::Generator()->newId()
+                  << " client= " << UniqueIDGenerator<ParticleId>::Generator()->newId()
                   << std::endl;
 }
 
@@ -151,18 +150,18 @@ struct Edge {
 
 void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bool writeToXML = false)
 {
-    cGenericGraph<Node, Edge> myGraph;
+    GenericGraph<Node, Edge> myGraph;
     struct std::vector<Node> vectNode(nbNodes);
     int nbArcsInserted = 0;
 
     //  Testing vertices adding
     time_t t = time(NULL);
     for (unsigned i = 0; i < nbNodes; i++) {
-        vectNode[i].name[0] = cRandom::Generate()->bernoulli(0.5) == 0 ? 'H' : 'h';
-        vectNode[i].name[1] = cRandom::Generate()->bernoulli(0.5) == 0 ? 'I' : 'i';
+        vectNode[i].name[0] = Random::Generate()->bernoulli(0.5) == 0 ? 'H' : 'h';
+        vectNode[i].name[1] = Random::Generate()->bernoulli(0.5) == 0 ? 'I' : 'i';
         vectNode[i].name[2] = '\0';
 
-        vectNode[i].otherProp = cRandom::Generate()->intuniform(1, vectNode.size());
+        vectNode[i].otherProp = Random::Generate()->intuniform(1, vectNode.size());
 
 #ifdef CHECK_BEFORE_INSERTION
         std::cout << "Attempt to insert " << vectNode[i] << ": ";
@@ -185,12 +184,12 @@ void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bo
 
     //  Testing arcs adding
     double prob = (double)(meanArcsPerNode) / (double)(vectNode.size());
-    cGenericGraph<Node, Edge>::VertexIDSet nodesSet = myGraph.vertices();
+    GenericGraph<Node, Edge>::VertexIDSet nodesSet = myGraph.vertices();
     unsigned long long i = 0;
     t = time(NULL);
-    for (cGenericGraph<Node, Edge>::VertexIDSet::const_iterator it = nodesSet.begin();
+    for (GenericGraph<Node, Edge>::VertexIDSet::const_iterator it = nodesSet.begin();
          it != nodesSet.end(); it++) {
-        for (cGenericGraph<Node, Edge>::VertexIDSet::const_iterator itsec = nodesSet.begin();
+        for (GenericGraph<Node, Edge>::VertexIDSet::const_iterator itsec = nodesSet.begin();
              itsec != nodesSet.end(); itsec++) {
             ++i;
             if (i % (nbNodes * nbNodes / 100) == 0) {
@@ -201,7 +200,7 @@ void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bo
             if (*it == *itsec)
                 continue;
 
-            if (cRandom::Generate()->bernoulli(prob) == 1) {
+            if (Random::Generate()->bernoulli(prob) == 1) {
 #ifdef CHECK_BEFORE_INSERTION
                 std::cout << "Attempt to insert " << myGraph.vertex(*it) << "-->" << myGraph.vertex(*itsec) << ": ";
                 if (myGraph.exists(*it, *itsec)) {
@@ -226,19 +225,19 @@ void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bo
 #endif
 
 #ifdef DEBUG
-    for (cGenericGraph<Node, Edge>::VertexIDSet::const_iterator it = nodesSet.begin();
+    for (GenericGraph<Node, Edge>::VertexIDSet::const_iterator it = nodesSet.begin();
          it != nodesSet.end(); it++) {
         std::cout << myGraph.vertex(*it) << " has " << myGraph.successorsNb(*it) << " successors and " << myGraph.predecessorsNb(*it) << " predecessors" << std::endl;
 
-        cGenericGraph<Node, Edge>::VertexIDSet set = myGraph.successors(*it);
+        GenericGraph<Node, Edge>::VertexIDSet set = myGraph.successors(*it);
         std::cout << "Successors of " << myGraph.vertex(*it) << " are : ";
-        for (cGenericGraph<Node, Edge>::VertexIDSet::iterator itsucc = set.begin(); itsucc != set.end(); itsucc++)
+        for (GenericGraph<Node, Edge>::VertexIDSet::iterator itsucc = set.begin(); itsucc != set.end(); itsucc++)
             std::cout << myGraph.vertex(*itsucc) << " ";
         std::cout << std::endl;
 
         set = myGraph.predecessors(*it);
         std::cout << "Predecessors of " << myGraph.vertex(*it) << " are : ";
-        for (cGenericGraph<Node, Edge>::VertexIDSet::iterator itpred = set.begin(); itpred != set.end(); itpred++)
+        for (GenericGraph<Node, Edge>::VertexIDSet::iterator itpred = set.begin(); itpred != set.end(); itpred++)
             std::cout << myGraph.vertex(*itpred) << " ";
         std::cout << std::endl;
     }
@@ -254,9 +253,9 @@ void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bo
 
     // Testing arcs removal
     i = 0;
-    for (cGenericGraph<Node, Edge>::VertexIDSet::const_iterator it = nodesSet.begin();
+    for (GenericGraph<Node, Edge>::VertexIDSet::const_iterator it = nodesSet.begin();
          it != nodesSet.end(); it++) {
-        for (cGenericGraph<Node, Edge>::VertexIDSet::const_iterator itsec = nodesSet.begin();
+        for (GenericGraph<Node, Edge>::VertexIDSet::const_iterator itsec = nodesSet.begin();
              itsec != nodesSet.end(); itsec++) {
             ++i;
             //if (i%10000==0) std::cout << "Step " << i << "." << std::endl;
@@ -264,7 +263,7 @@ void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bo
             if (*it == *itsec)
                 continue;
 
-            if (cRandom::Generate()->bernoulli(prob) == 1) {
+            if (Random::Generate()->bernoulli(prob) == 1) {
                 if (myGraph.remove(*it, *itsec))
                     --nbArcsInserted;
             }
@@ -281,10 +280,10 @@ void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bo
 
     // Testing nodes removal
     i = myGraph.verticesNb();
-    for (cGenericGraph<Node, Edge>::VertexIDSet::const_iterator it = nodesSet.begin();
+    for (GenericGraph<Node, Edge>::VertexIDSet::const_iterator it = nodesSet.begin();
          it != nodesSet.end(); it++) {
         Node n = myGraph.vertex(*it);
-        if (cRandom::Generate()->bernoulli(0.2) == 1) {
+        if (Random::Generate()->bernoulli(0.2) == 1) {
             if (myGraph.remove(n))
                 --i;
             else {
@@ -304,7 +303,7 @@ void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bo
     }
 
     std::cout << "Making a dup" << std::endl;
-    cGenericGraph<Node, Edge>* myOtherGraph = myGraph.dup();
+    GenericGraph<Node, Edge>* myOtherGraph = myGraph.dup();
     std::cout << "done !" << std::endl;
 
     std::cout << "Changing the name of the dup" << std::endl;
@@ -325,7 +324,7 @@ void testGenericGraph(const unsigned nbNodes, const unsigned meanArcsPerNode, bo
 
 void testRandomVariables(int nbSamples = 15)
 {
-    cRandomVariable X;
+    RandomVariable X;
     double mean, sample;
 
     std::cout << "Generating " << nbSamples << " of random variable X, of type '" << X.typeString() << "'" << std::endl;
@@ -423,8 +422,8 @@ int main()
     srand(time(NULL));
 
     /*
-    std::cout << "Hi. We will work with times of " << cSimulationTime::getBitsLength()
-              << " bits with a right side of " << cSimulationTime::getPrecisionLength() << " bits." << std::endl;
+    std::cout << "Hi. We will work with times of " << SimulationTime::getBitsLength()
+              << " bits with a right side of " << SimulationTime::getPrecisionLength() << " bits." << std::endl;
     //*/
 
     //testSimulationTime();

@@ -1,112 +1,112 @@
 /**
- * \file    movingparticle.cpp
+ * \file    MovingParticle.cpp
  * \brief   Implementation of base class for moving particles (clients, vehicles, ...) in discrete events simulators
  * \date    June, 13th, 2011
  * \author  Yahiaoui H.
  */
 
-#include "movingparticle.h"
-#include "desimulator.h"
+#include "MovingParticle.h"
+#include "DESimulator.h"
 
 #include <stdexcept>
 
-cMovingParticle::cMovingParticle(const tParticleId newId, const char* name)
-    : cSimulationEvent(cDESimulator::processedModule(), name)
+MovingParticle::MovingParticle(const ParticleId newId, const char* name)
+    : SimulationEvent(DESimulator::processedModule(), name)
     , m_id(newId)
     , m_previousModuleId(invalidModuleId)
-    , m_nextModuleId(cDESimulator::processedModule())
+    , m_nexModuleId(DESimulator::processedModule())
     , m_previousArrivalTime()
 {
 }
 
-cMovingParticle::cMovingParticle(const cMovingParticle& other)
-    : cSimulationEvent(cDESimulator::processedModule())
+MovingParticle::MovingParticle(const MovingParticle& other)
+    : SimulationEvent(DESimulator::processedModule())
     , m_id(invalidParticleId)
     , m_previousModuleId(invalidModuleId)
-    , m_nextModuleId(cDESimulator::processedModule())
+    , m_nexModuleId(DESimulator::processedModule())
     , m_previousArrivalTime()
 {
     operator=(other);
 }
 
-cMovingParticle cMovingParticle::operator=(const cMovingParticle& other)
+MovingParticle MovingParticle::operator=(const MovingParticle& other)
 {
     if (this != &other) {
-        cSimulationEvent::operator=(other);
+        SimulationEvent::operator=(other);
 
         m_id = other.m_id;
-        m_nextModuleId = other.m_nextModuleId;
+        m_nexModuleId = other.m_nexModuleId;
         m_previousModuleId = other.m_previousModuleId;
         m_previousArrivalTime = other.m_previousArrivalTime;
     }
     return *this;
 }
 
-bool cMovingParticle::operator==(const cMovingParticle& other)
+bool MovingParticle::operator==(const MovingParticle& other)
 {
-    if (!cSimulationEvent::operator==(other))
+    if (!SimulationEvent::operator==(other))
         return false;
-    return (m_id == other.m_id && m_nextModuleId == other.m_nextModuleId && m_previousModuleId == other.m_previousModuleId && m_previousArrivalTime == other.m_previousArrivalTime);
+    return (m_id == other.m_id && m_nexModuleId == other.m_nexModuleId && m_previousModuleId == other.m_previousModuleId && m_previousArrivalTime == other.m_previousArrivalTime);
 }
 
-tParticleId cMovingParticle::id() const
+ParticleId MovingParticle::id() const
 {
     return m_id;
 }
 
-tModuleId cMovingParticle::nextModule() const
+ModuleId MovingParticle::nextModule() const
 {
-    return m_nextModuleId;
+    return m_nexModuleId;
 }
 
-tModuleId cMovingParticle::previousModule() const
+ModuleId MovingParticle::previousModule() const
 {
     return m_previousModuleId;
 }
 
-cSimulationTime cMovingParticle::nextArrivalTime() const
+SimulationTime MovingParticle::nextArrivalTime() const
 {
-    return cSimulationEvent::occurrenceTime();
+    return SimulationEvent::occurrenceTime();
 }
 
-cSimulationTime cMovingParticle::previousArrivalTime() const
+SimulationTime MovingParticle::previousArrivalTime() const
 {
     return m_previousArrivalTime;
 }
 
-void cMovingParticle::setId(const tParticleId& newId)
+void MovingParticle::setId(const ParticleId& newId)
 {
     m_id = newId;
 }
 
-void cMovingParticle::send(const tModuleId destinationModuleId, const cSimulationTime& arrivalTime)
+void MovingParticle::send(const ModuleId destinationModuleId, const SimulationTime& arrivalTime)
 {
     if (destinationModuleId == invalidModuleId)
         throw std::runtime_error("Sending a moving particle to an unspecified module.");
 
     // Added by Yacine Ould Rouis: Correct the sending behaviour by recording the previous module ID before sending.
-    m_previousModuleId = m_nextModuleId;
+    m_previousModuleId = m_nexModuleId;
 
-    m_nextModuleId = destinationModuleId;
+    m_nexModuleId = destinationModuleId;
     scheduleAt(arrivalTime);
 }
 
-void cMovingParticle::sim_handleArrivalAtModule()
+void MovingParticle::sim_handleArrivalAtModule()
 {
-    if (cDESimulator::simulationPattern() == cDESimulator::BasedOnModulesBehaviours)
+    if (DESimulator::simulationPattern() == DESimulator::BasedOnModulesBehaviours)
         throw std::runtime_error("Invoking particle arrival at module while doing modules behaviours based simulation.");
     handleArrivalAtModule();
 }
 
-void cMovingParticle::handleArrivalAtModule()
+void MovingParticle::handleArrivalAtModule()
 {
     // Empty function. Must be overloaded to implement desired behaviour
 }
 
-const char* cMovingParticle::serialize() const
+const char* MovingParticle::serialize() const
 {
     std::ostringstream outStream;
-    outStream << "cMovingParticle["
+    outStream << "MovingParticle["
               << "id=" << id() << ", "
               << "name=\"" << name() << "\", "
               << "kind=" << kind() << ", "

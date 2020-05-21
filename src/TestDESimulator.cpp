@@ -1,15 +1,15 @@
-#include "test_desimulator.h"
-#include "moduletimer.h"
-#include "movingparticle.h"
-#include "random.h"
-#include "simulationevent.h"
-#include "simulationtime.h"
+#include "TestDESimulator.h"
+#include "ModuleTimer.h"
+#include "MovingParticle.h"
+#include "Random.h"
+#include "SimulationEvent.h"
+#include "SimulationTime.h"
 
 #include <iostream>
 
 void testSimulationEngine()
 {
-    cDESimulator::SimulationGraph mySimGraph;
+    DESimulator::SimulationGraph mySimGraph;
 
     //*
     std::cout << "-----------------------------------------------------" << std::endl
@@ -29,19 +29,19 @@ void testSimulationEngine()
 
     std::cout << "==============================================" << std::endl
               << "Initializing simulator." << std::endl;
-    cDESimulator::theSimulator()->initiateSimulator(&mySimGraph);
+    DESimulator::theSimulator()->initiateSimulator(&mySimGraph);
 
     std::cout << "==============================================" << std::endl
               << "Setting simulator Pattern." << std::endl;
-    cDESimulator::theSimulator()->setSimulationPattern(cDESimulator::BasedOnModulesBehaviours);
+    DESimulator::theSimulator()->setSimulationPattern(DESimulator::BasedOnModulesBehaviours);
 
     std::cout << "==============================================" << std::endl
               << "Simulating." << std::endl;
-    cDESimulator::theSimulator()->simulate(200);
+    DESimulator::theSimulator()->simulate(200);
 
     std::cout << "==============================================" << std::endl
               << "Cleaning up." << std::endl;
-    cDESimulator::theSimulator()->cleanupSimulator();
+    DESimulator::theSimulator()->cleanupSimulator();
 
     mySimGraph.remove(g);
     delete g;
@@ -91,19 +91,19 @@ void testSimulationEngine()
 
     std::cout << "==============================================" << std::endl
               << "Initializing simulator." << std::endl;
-    cDESimulator::theSimulator()->initiateSimulator(&mySimGraph);
+    DESimulator::theSimulator()->initiateSimulator(&mySimGraph);
 
     std::cout << "==============================================" << std::endl
               << "Setting simulator Pattern." << std::endl;
-    cDESimulator::theSimulator()->setSimulationPattern(cDESimulator::BasedOnModulesBehaviours);
+    DESimulator::theSimulator()->setSimulationPattern(DESimulator::BasedOnModulesBehaviours);
 
     std::cout << "==============================================" << std::endl
               << "Simulating." << std::endl;
-    cDESimulator::theSimulator()->simulate(200);
+    DESimulator::theSimulator()->simulate(200);
 
     std::cout << "==============================================" << std::endl
               << "Cleaning up." << std::endl;
-    cDESimulator::theSimulator()->cleanupSimulator();
+    DESimulator::theSimulator()->cleanupSimulator();
 
     mySimGraph.remove(g1);
     delete g1;
@@ -131,9 +131,9 @@ void MySink::getReady()
     nbReceivedParticles = 0;
 }
 
-void MySink::handleParticleArrival(cMovingParticle* arrivingParticle)
+void MySink::handleParticleArrival(MovingParticle* arrivingParticle)
 {
-    std::cout << cDESimulator::simTime() << ": " << *this << " RECEIVED " << *arrivingParticle << std::endl
+    std::cout << DESimulator::simTime() << ": " << *this << " RECEIVED " << *arrivingParticle << std::endl
               << std::endl;
 
     ++nbReceivedParticles;
@@ -151,12 +151,12 @@ void MyGen::getReady()
 {
     nbSentParticles = 0;
     m_sendingMeanInterval = 8.1;
-    m_sendingTimer = new cModuleTimer(std::string("GenTimer_") + std::to_string(id()));
+    m_sendingTimer = new ModuleTimer(std::string("GenTimer_") + std::to_string(id()));
     m_sendingTimer->scheduleAt(
-        cDESimulator::simTime() + cRandom::Generate()->exponential(1 / m_sendingMeanInterval.toDbl()));
+        DESimulator::simTime() + Random::Generate()->exponential(1 / m_sendingMeanInterval.toDbl()));
 }
 
-void MyGen::handleTimerTriggering(cModuleTimer* triggeredTimer)
+void MyGen::handleTimerTriggering(ModuleTimer* triggeredTimer)
 {
     if (triggeredTimer != m_sendingTimer) {
         std::ostringstream exceptionStream;
@@ -164,13 +164,13 @@ void MyGen::handleTimerTriggering(cModuleTimer* triggeredTimer)
         throw std::runtime_error(exceptionStream.str());
     }
 
-    cMovingParticle* newParticle = new cMovingParticle(nbSentParticles);
-    std::cout << cDESimulator::simTime() << ": " << *this << " IS SENDING " << *newParticle << std::endl
+    MovingParticle* newParticle = new MovingParticle(nbSentParticles);
+    std::cout << DESimulator::simTime() << ": " << *this << " IS SENDING " << *newParticle << std::endl
               << std::endl;
-    newParticle->send(neighbourDestinationForParticlesId(0), cDESimulator::simTime()); // Make it arrive NOW!
+    newParticle->send(neighbourDestinationForParticlesId(0), DESimulator::simTime()); // Make it arrive NOW!
     ++nbSentParticles;
     m_sendingTimer->scheduleAt(
-        cDESimulator::simTime() + cRandom::Generate()->exponential(1 / m_sendingMeanInterval.toDbl()));
+        DESimulator::simTime() + Random::Generate()->exponential(1 / m_sendingMeanInterval.toDbl()));
 }
 
 void MyGen::terminate()
@@ -211,21 +211,21 @@ void MyQueue::getReady()
 {
     nbTreatedParticles = 0;
     m_servingMeanInterval = 8;
-    m_servingTimer = new cModuleTimer("Serving Timer");
+    m_servingTimer = new ModuleTimer("Serving Timer");
 }
 
-void MyQueue::handleParticleArrival(cMovingParticle* arrivingParticle)
+void MyQueue::handleParticleArrival(MovingParticle* arrivingParticle)
 {
-    std::cout << cDESimulator::simTime() << ": " << *this << " RECEIVED " << *arrivingParticle << std::endl
+    std::cout << DESimulator::simTime() << ": " << *this << " RECEIVED " << *arrivingParticle << std::endl
               << std::endl;
 
     m_waitingParticles.push(arrivingParticle);
     if (!m_servingTimer->isScheduled())
         m_servingTimer->scheduleAt(
-            cDESimulator::simTime() + cRandom::Generate()->exponential(1 / m_servingMeanInterval.toDbl()));
+            DESimulator::simTime() + Random::Generate()->exponential(1 / m_servingMeanInterval.toDbl()));
 }
 
-void MyQueue::handleTimerTriggering(cModuleTimer* triggeredTimer)
+void MyQueue::handleTimerTriggering(ModuleTimer* triggeredTimer)
 {
     if (triggeredTimer != m_servingTimer) {
         std::ostringstream exceptionStream;
@@ -234,25 +234,25 @@ void MyQueue::handleTimerTriggering(cModuleTimer* triggeredTimer)
     }
 
     // Get a particle from the queue
-    cMovingParticle* particleToSend = m_waitingParticles.front();
+    MovingParticle* particleToSend = m_waitingParticles.front();
     m_waitingParticles.pop();
 
     // Send it to the sink
-    std::cout << cDESimulator::simTime() << ": " << *this << " SERVED AND IS SENDING " << *particleToSend << std::endl
+    std::cout << DESimulator::simTime() << ": " << *this << " SERVED AND IS SENDING " << *particleToSend << std::endl
               << std::endl;
     releaseParticle(particleToSend);
 
     // This module can have several outputs, choose randomly one of them to send the particle
-    unsigned choosenDestIndex = cRandom::Generate()->intuniform(0, neighbourDestinationForParticlesNb() - 1);
+    unsigned choosenDestIndex = Random::Generate()->intuniform(0, neighbourDestinationForParticlesNb() - 1);
     std::cout << "Choosen index == " << choosenDestIndex << std::endl;
-    particleToSend->send(neighbourDestinationForParticlesId(choosenDestIndex), cDESimulator::simTime());
+    particleToSend->send(neighbourDestinationForParticlesId(choosenDestIndex), DESimulator::simTime());
 
     nbTreatedParticles++;
 
     // If there are still particles to serve, re-schedule the timer
     if (!m_waitingParticles.empty())
         m_servingTimer->scheduleAt(
-            cDESimulator::simTime() + cRandom::Generate()->exponential(1 / m_servingMeanInterval.toDbl()));
+            DESimulator::simTime() + Random::Generate()->exponential(1 / m_servingMeanInterval.toDbl()));
 }
 
 void MyQueue::terminate()

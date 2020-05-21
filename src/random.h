@@ -5,7 +5,7 @@
   * \brief  A singleton class providing randomly generated number.
   *
   * Invocation of random numbers generations is done with:
-  *     x = cRandom::Generate()->Distribution_Name( Distribution_Params );
+  *     x = Random::Generate()->Distribution_Name( Distribution_Params );
   * where, Distribution_Name can be one of the following discrete distributions
   * -   bernoulli, to produce values of a Bernoulli distribution (1 with probability p, 0 with probability 1-p)
   * -   intuniform, to produce uniformly distributed integer values in an interval
@@ -17,19 +17,19 @@
   * -   normal, to produce values of a Normal (Gaussian) distribution with the given mean and standard deviation
   * -   lognormal, to produce values of a Log-Normal distribution with the given mean and standard deviation
   */
-class cRandom {
+class Random {
 public:
     /**
       * \brief  Static, public, method to use when requesting random values from a random variable distribution
       */
-    static cRandom* Generate();
+    static Random* Generate();
 
     /**
       * \brief  Destructor
       *
       * This destructor is implicitly called by
       */
-    ~cRandom();
+    ~Random();
 
     // Discrete Distributions
     /**
@@ -79,9 +79,9 @@ public:
 
 private:
     // Private constructors and assignement operator to ensure singleton property
-    cRandom();
-    cRandom(const cRandom& other) { }
-    cRandom& operator=(const cRandom& other) { return *this; }
+    Random();
+    Random(const Random& other) { }
+    Random& operator=(const Random& other) { return *this; }
 
     /**
       * \brief computes and returns next random number
@@ -89,7 +89,7 @@ private:
     unsigned long getRand();
 
     // Private attributs
-    static cRandom* generatorInstance;
+    static Random* generatorInstance;
 
     unsigned long base;
     unsigned seedsNb;

@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-class cRandomVariable {
+class RandomVariable {
 public:
     enum VariableCategory {
         Undefined,
@@ -43,7 +43,7 @@ public:
         double stdDev;
     };
 
-    cRandomVariable(const VariableType varType = Unusable, const double param1 = 0, const double param2 = 0);
+    RandomVariable(const VariableType varType = Unusable, const double param1 = 0, const double param2 = 0);
 
     // Getters
     VariableType type() const

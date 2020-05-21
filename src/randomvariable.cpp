@@ -1,17 +1,17 @@
-#include "randomvariable.h"
-#include "random.h"
+#include "RandomVariable.h"
+#include "Random.h"
 
 #include <cfloat>
 #include <climits>
 #include <cmath>
 
-const std::vector<std::string> cRandomVariable::m_typesNames = {
+const std::vector<std::string> RandomVariable::m_typesNames = {
     "Unusable", "Uniform", "IntUniform", "Bernoulli", "Binomial", "Poisson", "Exponential", "Normal", "LogNormal"
 };
 
-cRandomVariable::cRandomVariable(const VariableType varType, const double param1, const double param2)
-    : m_category(cRandomVariable::Undefined)
-    , m_type(cRandomVariable::Unusable)
+RandomVariable::RandomVariable(const VariableType varType, const double param1, const double param2)
+    : m_category(RandomVariable::Undefined)
+    , m_type(RandomVariable::Unusable)
     , m_param()
 {
     switch (varType) {
@@ -44,7 +44,7 @@ cRandomVariable::cRandomVariable(const VariableType varType, const double param1
     }
 }
 
-void cRandomVariable::setUniform(const double bound1, const double bound2)
+void RandomVariable::setUniform(const double bound1, const double bound2)
 {
     m_type = Uniform;
     m_category = Continuous;
@@ -52,7 +52,7 @@ void cRandomVariable::setUniform(const double bound1, const double bound2)
     m_param.uniformParam.upperBound = bound1 < bound2 ? bound2 : bound1;
 }
 
-void cRandomVariable::setIntUniform(const int bound1, const int bound2)
+void RandomVariable::setIntUniform(const int bound1, const int bound2)
 {
     m_type = IntUniform;
     m_category = Discrete;
@@ -60,14 +60,14 @@ void cRandomVariable::setIntUniform(const int bound1, const int bound2)
     m_param.intUniformParam.upperBound = bound1 < bound2 ? bound2 : bound1;
 }
 
-void cRandomVariable::setBernoulli(const double p)
+void RandomVariable::setBernoulli(const double p)
 {
     m_type = Bernoulli;
     m_category = Discrete;
     m_param.bernoulliParam = p;
 }
 
-void cRandomVariable::setBinomial(const unsigned n, const double p)
+void RandomVariable::setBinomial(const unsigned n, const double p)
 {
     m_type = Binomial;
     m_category = Discrete;
@@ -75,21 +75,21 @@ void cRandomVariable::setBinomial(const unsigned n, const double p)
     m_param.binomialParam.prob = p;
 }
 
-void cRandomVariable::setExponential(const double lambda)
+void RandomVariable::setExponential(const double lambda)
 {
     m_type = Exponential;
     m_category = Continuous;
     m_param.exponentialParam = lambda;
 }
 
-void cRandomVariable::setPoisson(const double lambda)
+void RandomVariable::setPoisson(const double lambda)
 {
     m_type = Poisson;
     m_category = Discrete;
     m_param.poissonParam = lambda;
 }
 
-void cRandomVariable::setNormal(const double mean, const double standardDev)
+void RandomVariable::setNormal(const double mean, const double standardDev)
 {
     m_type = Normal;
     m_category = Continuous;
@@ -97,7 +97,7 @@ void cRandomVariable::setNormal(const double mean, const double standardDev)
     m_param.normalParam.stdDev = standardDev;
 }
 
-void cRandomVariable::setLogNormal(const double mean, const double standardDev)
+void RandomVariable::setLogNormal(const double mean, const double standardDev)
 {
     m_type = LogNormal;
     m_category = Continuous;
@@ -105,43 +105,43 @@ void cRandomVariable::setLogNormal(const double mean, const double standardDev)
     m_param.lognormalParam.stdDev = standardDev;
 }
 
-double cRandomVariable::generateSample() const
+double RandomVariable::generateSample() const
 {
     switch (m_type) {
     case Uniform:
-        return cRandom::Generate()->uniform(
+        return Random::Generate()->uniform(
             m_param.uniformParam.lowerBound,
             m_param.uniformParam.upperBound);
         break;
     case IntUniform:
-        return cRandom::Generate()->intuniform(
+        return Random::Generate()->intuniform(
             m_param.intUniformParam.lowerBound,
             m_param.intUniformParam.upperBound);
         break;
     case Bernoulli:
-        return cRandom::Generate()->bernoulli(
+        return Random::Generate()->bernoulli(
             m_param.bernoulliParam);
         break;
     case Binomial:
-        return cRandom::Generate()->binomial(
+        return Random::Generate()->binomial(
             m_param.binomialParam.nb,
             m_param.binomialParam.prob);
         break;
     case Poisson:
-        return cRandom::Generate()->poisson(
+        return Random::Generate()->poisson(
             m_param.poissonParam);
         break;
     case Exponential:
-        return cRandom::Generate()->exponential(
+        return Random::Generate()->exponential(
             m_param.exponentialParam);
         break;
     case Normal:
-        return cRandom::Generate()->normal(
+        return Random::Generate()->normal(
             m_param.normalParam.mean,
             m_param.normalParam.stdDev);
         break;
     case LogNormal:
-        return cRandom::Generate()->lognormal(
+        return Random::Generate()->lognormal(
             m_param.lognormalParam.mean,
             m_param.lognormalParam.stdDev);
         break;
@@ -151,7 +151,7 @@ double cRandomVariable::generateSample() const
     }
 }
 
-double cRandomVariable::mean() const
+double RandomVariable::mean() const
 {
     switch (m_type) {
     case Uniform:
@@ -184,7 +184,7 @@ double cRandomVariable::mean() const
     }
 }
 
-double cRandomVariable::variance() const
+double RandomVariable::variance() const
 {
     switch (m_type) {
     case Uniform:
@@ -221,12 +221,12 @@ double cRandomVariable::variance() const
     }
 }
 
-double cRandomVariable::standardDeviation() const
+double RandomVariable::standardDeviation() const
 {
     return sqrt(variance());
 }
 
-double cRandomVariable::minValue() const
+double RandomVariable::minValue() const
 {
     switch (m_type) {
     case Uniform:
@@ -249,7 +249,7 @@ double cRandomVariable::minValue() const
     }
 }
 
-double cRandomVariable::maxValue() const
+double RandomVariable::maxValue() const
 {
     switch (m_type) {
     case Uniform:

@@ -1,5 +1,5 @@
 /**
- * \file    test_desimulator.h
+ * \file    TestDESimulator.h
  * \brief   Test unit for Discret Events simulator framework.
  * \date    June, 10th, 2011
  * \author  Yahiaoui H.
@@ -9,7 +9,8 @@
 #ifndef TEST_DESIMULATOR_H
 #define TEST_DESIMULATOR_H
 
-#include "desimulator.h"
+#include "DESimulator.h"
+
 #include <iostream>
 
 /**
@@ -25,14 +26,14 @@ enum MyModulesKinds {
 /**
   * \brief  Generator of moving particles for the Test Unit.
   */
-class MyGen : public cSimulationModule {
+class MyGen : public SimulationModule {
 public:
     /**
       * \brief  Default constructor
       * \param  name    Generator's name
       */
     MyGen(const std::string& name = std::string())
-        : cSimulationModule(Generator, name)
+        : SimulationModule(Generator, name)
         , nbSentParticles(0)
         , m_sendingMeanInterval()
         , m_sendingTimer(NULL)
@@ -55,17 +56,17 @@ protected:
     /**
       * \brief  Overloaded method for handeling particles arrival to module (Does nothing)
       */
-    virtual void handleParticleArrival(cMovingParticle* arrivingParticle) { }
+    virtual void handleParticleArrival(MovingParticle* arrivingParticle) { }
 
     /**
       * \brief  Overloaded method for handeling particles departure from module (Does nothing)
       */
-    virtual void handleParticleDeparture(cMovingParticle* arrivingParticle) { }
+    virtual void handleParticleDeparture(MovingParticle* arrivingParticle) { }
 
     /**
       * \brief  Overloaded method for handeling timers firing
       */
-    virtual void handleTimerTriggering(cModuleTimer* triggeredTimer);
+    virtual void handleTimerTriggering(ModuleTimer* triggeredTimer);
 
     /**
       * \brief  Overloaded termination method
@@ -74,22 +75,22 @@ protected:
 
 private:
     unsigned nbSentParticles;
-    cSimulationTime m_sendingMeanInterval;
-    cModuleTimer* m_sendingTimer;
+    SimulationTime m_sendingMeanInterval;
+    ModuleTimer* m_sendingTimer;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /**
   * \brief  Module receving particles, putting them in a waiting queue, and treating them in FIFO order.
   */
-class MyQueue : public cSimulationModule {
+class MyQueue : public SimulationModule {
 public:
     /**
       * \brief  Default constructor.
       * \param  name    Queue's name.
       */
     MyQueue(const std::string& name = std::string())
-        : cSimulationModule(ServerAndQueue, name)
+        : SimulationModule(ServerAndQueue, name)
         , nbTreatedParticles(0)
         , m_servingMeanInterval()
         , m_servingTimer(NULL)
@@ -111,17 +112,17 @@ protected:
     /**
       * \brief  Overloaded method for handeling particles arrival to module (Does nothing)
       */
-    virtual void handleParticleArrival(cMovingParticle* arrivingParticle);
+    virtual void handleParticleArrival(MovingParticle* arrivingParticle);
 
     /**
       * \brief  Overloaded method for handeling particles departure from module (Does nothing)
       */
-    virtual void handleParticleDeparture(cMovingParticle* arrivingParticle) { }
+    virtual void handleParticleDeparture(MovingParticle* arrivingParticle) { }
 
     /**
       * \brief  Overloaded method for handeling timers firing
       */
-    virtual void handleTimerTriggering(cModuleTimer* triggeredTimer);
+    virtual void handleTimerTriggering(ModuleTimer* triggeredTimer);
 
     /**
       * \brief  Overloaded termination method
@@ -130,23 +131,23 @@ protected:
 
 private:
     unsigned nbTreatedParticles;
-    cSimulationTime m_servingMeanInterval;
-    cModuleTimer* m_servingTimer;
-    std::queue<cMovingParticle*> m_waitingParticles;
+    SimulationTime m_servingMeanInterval;
+    ModuleTimer* m_servingTimer;
+    std::queue<MovingParticle*> m_waitingParticles;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 /**
   * \brief  Final destination of every particles generated in the test unit: a bottomless pit.
   */
-class MySink : public cSimulationModule {
+class MySink : public SimulationModule {
 public:
     /**
       * \brief  Default constructor
       * \param  name    The sink's name.
       */
     MySink(const std::string& name = std::string())
-        : cSimulationModule(Sink, name)
+        : SimulationModule(Sink, name)
         , nbReceivedParticles(0)
     {
     }
@@ -160,17 +161,17 @@ protected:
     /**
       * \brief  Overloaded method for handeling particles arrival to module (Does nothing)
       */
-    virtual void handleParticleArrival(cMovingParticle* arrivingParticle);
+    virtual void handleParticleArrival(MovingParticle* arrivingParticle);
 
     /**
       * \brief  Overloaded method for handeling particles departure from module (Does nothing)
       */
-    virtual void handleParticleDeparture(cMovingParticle* arrivingParticle) { }
+    virtual void handleParticleDeparture(MovingParticle* arrivingParticle) { }
 
     /**
       * \brief  Overloaded method for handeling timers firing
       */
-    virtual void handleTimerTriggering(cModuleTimer* triggeredTimer) { }
+    virtual void handleTimerTriggering(ModuleTimer* triggeredTimer) { }
 
     /**
       * \brief  Overloaded termination method

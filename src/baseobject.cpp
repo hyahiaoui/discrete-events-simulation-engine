@@ -1,17 +1,17 @@
 /**
- * \file    baseobject.cpp
+ * \file    BaseObject.cpp
  * \brief   Implementation of base class for static and dynamic elements in maps edition and simulation.
  * \date    June, 10th, 2011
  * \author  Yahiaoui H.
  */
 
-#include "baseobject.h"
+#include "BaseObject.h"
 
 #include <sstream>
 
 const char EmptyName[] = "";
 
-cBaseObject::cBaseObject(const char* name)
+BaseObject::BaseObject(const char* name)
     : m_name(std::string())
     , m_kind(0)
 {
@@ -19,24 +19,24 @@ cBaseObject::cBaseObject(const char* name)
         m_name = std::string(name);
 }
 
-cBaseObject::cBaseObject(const std::string& name)
+BaseObject::BaseObject(const std::string& name)
     : m_name(std::string())
     , m_kind(0)
 {
     m_name = name;
 }
 
-cBaseObject::cBaseObject(const cBaseObject& other)
+BaseObject::BaseObject(const BaseObject& other)
     : m_name(std::string())
 {
     operator=(other);
 }
 
-cBaseObject::~cBaseObject() noexcept(false)
+BaseObject::~BaseObject() noexcept(false)
 {
 }
 
-cBaseObject& cBaseObject::operator=(const cBaseObject& other)
+BaseObject& BaseObject::operator=(const BaseObject& other)
 {
     if (this != &other) {
         m_name = other.m_name;
@@ -45,17 +45,17 @@ cBaseObject& cBaseObject::operator=(const cBaseObject& other)
     return *this;
 }
 
-bool cBaseObject::operator==(const cBaseObject& other) const
+bool BaseObject::operator==(const BaseObject& other) const
 {
     return (m_kind == other.m_kind) && (m_name == other.m_name);
 }
 
-bool cBaseObject::operator!=(const cBaseObject& other) const
+bool BaseObject::operator!=(const BaseObject& other) const
 {
     return !operator==(other);
 }
 
-void cBaseObject::setName(const char* name)
+void BaseObject::setName(const char* name)
 {
     if (name) {
         m_name = std::string(name);
@@ -63,41 +63,41 @@ void cBaseObject::setName(const char* name)
         m_name = std::string();
 }
 
-void cBaseObject::setName(const std::string& name)
+void BaseObject::setName(const std::string& name)
 {
     m_name = name;
 }
 
-const char* cBaseObject::name() const
+const char* BaseObject::name() const
 {
     return m_name.c_str();
 }
 
-int cBaseObject::kind() const
+int BaseObject::kind() const
 {
     return m_kind;
 }
 
-void cBaseObject::setKind(const int kind)
+void BaseObject::setKind(const int kind)
 {
     m_kind = kind;
 }
 
-const char* cBaseObject::serialize() const
+const char* BaseObject::serialize() const
 {
     std::ostringstream outStream;
-    outStream << "cBaseObject["
+    outStream << "BaseObject["
               << "name=\"" << name() << "\", "
               << "kind=" << kind() << "]";
     return outStream.str().c_str();
 }
 
-std::ostream& operator<<(std::ostream& ost, const cBaseObject& obj)
+std::ostream& operator<<(std::ostream& ost, const BaseObject& obj)
 {
     return ost << (&obj)->serialize();
 }
 
-std::ostream& operator<<(std::ostream& ost, const cBaseObject* obj)
+std::ostream& operator<<(std::ostream& ost, const BaseObject* obj)
 {
     if (obj)
         ost << obj->serialize();
