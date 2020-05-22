@@ -51,10 +51,7 @@ TEST_CASE("A Discrete Event Simulation can be defined and run", "[DESimulator]")
     delete s;
     mySimGraph.remove(q);
     delete q;
-
-    getchar();
-    //*/
-
+    
     std::cout << "-----------------------------------------------------" << std::endl
               << "---------------------  Network 2 --------------------" << std::endl
               << "-----------------------------------------------------" << std::endl;
@@ -123,8 +120,6 @@ TEST_CASE("A Discrete Event Simulation can be defined and run", "[DESimulator]")
     delete q3;
     mySimGraph.remove(q4);
     delete q4;
-
-    getchar();
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
