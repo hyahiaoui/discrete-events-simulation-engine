@@ -6,46 +6,10 @@ include(build/conanbuildinfo.cmake)
 
 conan_basic_setup()
 
-set(SRCS
-    src/BaseObject.cpp
-    src/DESimulator.cpp
-    src/GenericGraph.cpp
-    src/main.cpp
-    src/ModuleTimer.cpp
-    src/MovingParticle.cpp
-    src/Random.cpp
-    src/RandomVariable.cpp
-    src/SimulationEvent.cpp
-    src/SimulationModule.cpp
-    src/SimulationTime.cpp
-    src/TestDESimulator.cpp
-    src/UniqueIDGenerator.cpp
-    )
-    
-set(HEADERS
-    src/BaseObject.h
-    src/common.h
-    src/DESimulator.h
-    src/GenericGraph.h
-    src/ModuleTimer.h
-    src/MovingParticle.h
-    src/Random.h
-    src/RandomVariable.h
-    src/SimulationEvent.h
-    src/SimulationModule.h
-    src/SimulationTime.h
-    src/TestDESimulator.h
-    src/UniqueIDGenerator.h
-    )
+set(CMAKE_CXX_STANDARD 17)
 
-add_compile_options(-std=c++11)
+include_directories(lib)
 
-add_executable(des ${SRCS} ${HEADERS})
-
-target_link_libraries(des ${CONAN_LIBS})
-
-link_libraries("-static")
-
-
-
-
+add_subdirectory(lib)
+add_subdirectory(app)
+add_subdirectory(test)
