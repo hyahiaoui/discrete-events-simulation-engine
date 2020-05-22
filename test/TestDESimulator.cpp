@@ -1,13 +1,15 @@
 #include "TestDESimulator.h"
+
+#include "DESimulator.h"
 #include "ModuleTimer.h"
 #include "MovingParticle.h"
 #include "Random.h"
-#include "SimulationEvent.h"
-#include "SimulationTime.h"
+
+#include "catch2/catch.hpp"
 
 #include <iostream>
 
-void testSimulationEngine()
+TEST_CASE("A Discrete Event Simulation can be defined and run", "[DESimulator]")
 {
     DESimulator::SimulationGraph mySimGraph;
 

@@ -9,9 +9,10 @@
 #ifndef TEST_DESIMULATOR_H
 #define TEST_DESIMULATOR_H
 
-#include "DESimulator.h"
+#include "SimulationModule.h"
 
 #include <iostream>
+#include <queue>
 
 /**
   * \brief  Kinds of modules used in Discret Events simulator framework.
@@ -181,11 +182,5 @@ protected:
 private:
     unsigned nbReceivedParticles;
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////
-/**
-  * \brief  Test unit funtion: creates a simulation, creates and links simulation modules, then launches athe simulation before cleaning up the mess.
-  */
-void testSimulationEngine();
 
 #endif // TEST_DESIMULATOR_H
